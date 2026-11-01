@@ -12,6 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PlatformRouteImport } from './routes/platform'
 import { Route as PlatformIndexRouteImport } from './routes/platform.index'
+import { Route as PlatformAssinaturasRouteImport } from './routes/platform.assinaturas'
+import { Route as PlatformDashboardRouteImport } from './routes/platform.dashboard'
+import { Route as PlatformFinanceiroRouteImport } from './routes/platform.financeiro'
+import { Route as PlatformLicencasRouteImport } from './routes/platform.licencas'
+import { Route as PlatformPlanosRouteImport } from './routes/platform.planos'
+import { Route as PlatformEscritoriosIndexRouteImport } from './routes/platform.escritorios.index'
+import { Route as PlatformEscritoriosIdRouteImport } from './routes/platform.escritorios.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,28 +35,115 @@ const PlatformIndexRoute = PlatformIndexRouteImport.update({
   path: '/',
   getParentRoute: () => PlatformRoute,
 } as any)
+const PlatformAssinaturasRoute = PlatformAssinaturasRouteImport.update({
+  id: '/assinaturas',
+  path: '/assinaturas',
+  getParentRoute: () => PlatformRoute,
+} as any)
+const PlatformDashboardRoute = PlatformDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => PlatformRoute,
+} as any)
+const PlatformFinanceiroRoute = PlatformFinanceiroRouteImport.update({
+  id: '/financeiro',
+  path: '/financeiro',
+  getParentRoute: () => PlatformRoute,
+} as any)
+const PlatformLicencasRoute = PlatformLicencasRouteImport.update({
+  id: '/licencas',
+  path: '/licencas',
+  getParentRoute: () => PlatformRoute,
+} as any)
+const PlatformPlanosRoute = PlatformPlanosRouteImport.update({
+  id: '/planos',
+  path: '/planos',
+  getParentRoute: () => PlatformRoute,
+} as any)
+const PlatformEscritoriosIndexRoute =
+  PlatformEscritoriosIndexRouteImport.update({
+    id: '/escritorios/',
+    path: '/escritorios/',
+    getParentRoute: () => PlatformRoute,
+  } as any)
+const PlatformEscritoriosIdRoute = PlatformEscritoriosIdRouteImport.update({
+  id: '/escritorios/$id',
+  path: '/escritorios/$id',
+  getParentRoute: () => PlatformRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/platform': typeof PlatformRouteWithChildren
+  '/platform/assinaturas': typeof PlatformAssinaturasRoute
+  '/platform/dashboard': typeof PlatformDashboardRoute
+  '/platform/financeiro': typeof PlatformFinanceiroRoute
+  '/platform/licencas': typeof PlatformLicencasRoute
+  '/platform/planos': typeof PlatformPlanosRoute
   '/platform/': typeof PlatformIndexRoute
+  '/platform/escritorios/$id': typeof PlatformEscritoriosIdRoute
+  '/platform/escritorios/': typeof PlatformEscritoriosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/platform/assinaturas': typeof PlatformAssinaturasRoute
+  '/platform/dashboard': typeof PlatformDashboardRoute
+  '/platform/financeiro': typeof PlatformFinanceiroRoute
+  '/platform/licencas': typeof PlatformLicencasRoute
+  '/platform/planos': typeof PlatformPlanosRoute
   '/platform': typeof PlatformIndexRoute
+  '/platform/escritorios/$id': typeof PlatformEscritoriosIdRoute
+  '/platform/escritorios': typeof PlatformEscritoriosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/platform': typeof PlatformRouteWithChildren
+  '/platform/assinaturas': typeof PlatformAssinaturasRoute
+  '/platform/dashboard': typeof PlatformDashboardRoute
+  '/platform/financeiro': typeof PlatformFinanceiroRoute
+  '/platform/licencas': typeof PlatformLicencasRoute
+  '/platform/planos': typeof PlatformPlanosRoute
   '/platform/': typeof PlatformIndexRoute
+  '/platform/escritorios/$id': typeof PlatformEscritoriosIdRoute
+  '/platform/escritorios/': typeof PlatformEscritoriosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/platform' | '/platform/'
+  fullPaths:
+    | '/'
+    | '/platform'
+    | '/platform/assinaturas'
+    | '/platform/dashboard'
+    | '/platform/financeiro'
+    | '/platform/licencas'
+    | '/platform/planos'
+    | '/platform/'
+    | '/platform/escritorios/$id'
+    | '/platform/escritorios/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/platform'
-  id: '__root__' | '/' | '/platform' | '/platform/'
+  to:
+    | '/'
+    | '/platform/assinaturas'
+    | '/platform/dashboard'
+    | '/platform/financeiro'
+    | '/platform/licencas'
+    | '/platform/planos'
+    | '/platform'
+    | '/platform/escritorios/$id'
+    | '/platform/escritorios'
+  id:
+    | '__root__'
+    | '/'
+    | '/platform'
+    | '/platform/assinaturas'
+    | '/platform/dashboard'
+    | '/platform/financeiro'
+    | '/platform/licencas'
+    | '/platform/planos'
+    | '/platform/'
+    | '/platform/escritorios/$id'
+    | '/platform/escritorios/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -80,15 +174,78 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlatformIndexRouteImport
       parentRoute: typeof PlatformRoute
     }
+    '/platform/assinaturas': {
+      id: '/platform/assinaturas'
+      path: '/assinaturas'
+      fullPath: '/platform/assinaturas'
+      preLoaderRoute: typeof PlatformAssinaturasRouteImport
+      parentRoute: typeof PlatformRoute
+    }
+    '/platform/dashboard': {
+      id: '/platform/dashboard'
+      path: '/dashboard'
+      fullPath: '/platform/dashboard'
+      preLoaderRoute: typeof PlatformDashboardRouteImport
+      parentRoute: typeof PlatformRoute
+    }
+    '/platform/financeiro': {
+      id: '/platform/financeiro'
+      path: '/financeiro'
+      fullPath: '/platform/financeiro'
+      preLoaderRoute: typeof PlatformFinanceiroRouteImport
+      parentRoute: typeof PlatformRoute
+    }
+    '/platform/licencas': {
+      id: '/platform/licencas'
+      path: '/licencas'
+      fullPath: '/platform/licencas'
+      preLoaderRoute: typeof PlatformLicencasRouteImport
+      parentRoute: typeof PlatformRoute
+    }
+    '/platform/planos': {
+      id: '/platform/planos'
+      path: '/planos'
+      fullPath: '/platform/planos'
+      preLoaderRoute: typeof PlatformPlanosRouteImport
+      parentRoute: typeof PlatformRoute
+    }
+    '/platform/escritorios/': {
+      id: '/platform/escritorios/'
+      path: '/escritorios'
+      fullPath: '/platform/escritorios/'
+      preLoaderRoute: typeof PlatformEscritoriosIndexRouteImport
+      parentRoute: typeof PlatformRoute
+    }
+    '/platform/escritorios/$id': {
+      id: '/platform/escritorios/$id'
+      path: '/escritorios/$id'
+      fullPath: '/platform/escritorios/$id'
+      preLoaderRoute: typeof PlatformEscritoriosIdRouteImport
+      parentRoute: typeof PlatformRoute
+    }
   }
 }
 
 interface PlatformRouteChildren {
+  PlatformAssinaturasRoute: typeof PlatformAssinaturasRoute
+  PlatformDashboardRoute: typeof PlatformDashboardRoute
+  PlatformFinanceiroRoute: typeof PlatformFinanceiroRoute
+  PlatformLicencasRoute: typeof PlatformLicencasRoute
+  PlatformPlanosRoute: typeof PlatformPlanosRoute
   PlatformIndexRoute: typeof PlatformIndexRoute
+  PlatformEscritoriosIdRoute: typeof PlatformEscritoriosIdRoute
+  PlatformEscritoriosIndexRoute: typeof PlatformEscritoriosIndexRoute
 }
 
 const PlatformRouteChildren: PlatformRouteChildren = {
+  PlatformAssinaturasRoute: PlatformAssinaturasRoute,
+  PlatformDashboardRoute: PlatformDashboardRoute,
+  PlatformFinanceiroRoute: PlatformFinanceiroRoute,
+  PlatformLicencasRoute: PlatformLicencasRoute,
+  PlatformPlanosRoute: PlatformPlanosRoute,
   PlatformIndexRoute: PlatformIndexRoute,
+  PlatformEscritoriosIdRoute: PlatformEscritoriosIdRoute,
+  PlatformEscritoriosIndexRoute: PlatformEscritoriosIndexRoute,
 }
 
 const PlatformRouteWithChildren = PlatformRoute._addFileChildren(
