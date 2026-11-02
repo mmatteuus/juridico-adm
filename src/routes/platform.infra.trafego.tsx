@@ -1,16 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { EmptyState, PageHeader } from "@/components/admin/kit";
+import { InfraPage } from "@/components/admin/InfraPage";
 
 export const Route = createFileRoute("/platform/infra/trafego")({
   head: () => ({ meta: [{ title: "Workers e API — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
-  component: Page,
+  component: () => (
+    <InfraPage withApp title="Workers e API" description="Requisições, latência e erros por app e período." source="Cloudflare Workers (não conectado)"
+      metrics={[
+        { key: "requests", label: "Requisições", unit: "req", agg: "sum" },
+        { key: "latency", label: "Latência p95", unit: "ms", type: "line" },
+        { key: "errors4xx", label: "Erros 4xx", unit: "req", agg: "sum", type: "bar" },
+        { key: "errors5xx", label: "Erros 5xx", unit: "req", agg: "sum", type: "bar" },
+        { key: "traffic", label: "Tráfego", unit: "GB", agg: "sum" },
+      ]} />
+  ),
 });
-
-function Page() {
-  return (
-    <>
-      <PageHeader title="Workers e API" description="Módulo em construção (DEMO)." />
-      <EmptyState title="Em breve" text="Esta tela será concluída na próxima etapa." />
-    </>
-  );
-}
