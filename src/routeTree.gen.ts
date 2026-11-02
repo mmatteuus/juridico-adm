@@ -13,12 +13,26 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PlatformRouteImport } from './routes/platform'
 import { Route as PlatformIndexRouteImport } from './routes/platform.index'
 import { Route as PlatformAssinaturasRouteImport } from './routes/platform.assinaturas'
+import { Route as PlatformConfiguracoesRouteImport } from './routes/platform.configuracoes'
 import { Route as PlatformDashboardRouteImport } from './routes/platform.dashboard'
+import { Route as PlatformDevelopersRouteImport } from './routes/platform.developers'
 import { Route as PlatformFinanceiroRouteImport } from './routes/platform.financeiro'
+import { Route as PlatformIncidentesRouteImport } from './routes/platform.incidentes'
 import { Route as PlatformLicencasRouteImport } from './routes/platform.licencas'
 import { Route as PlatformPlanosRouteImport } from './routes/platform.planos'
+import { Route as PlatformReleasesRouteImport } from './routes/platform.releases'
+import { Route as PlatformSegurancaRouteImport } from './routes/platform.seguranca'
 import { Route as PlatformEscritoriosIndexRouteImport } from './routes/platform.escritorios.index'
 import { Route as PlatformEscritoriosIdRouteImport } from './routes/platform.escritorios.$id'
+import { Route as PlatformInfraBancoRouteImport } from './routes/platform.infra.banco'
+import { Route as PlatformInfraCustosRouteImport } from './routes/platform.infra.custos'
+import { Route as PlatformInfraDominiosRouteImport } from './routes/platform.infra.dominios'
+import { Route as PlatformInfraFilasRouteImport } from './routes/platform.infra.filas'
+import { Route as PlatformInfraTrafegoRouteImport } from './routes/platform.infra.trafego'
+import { Route as PlatformRevendedoresIndexRouteImport } from './routes/platform.revendedores.index'
+import { Route as PlatformRevendedoresIdRouteImport } from './routes/platform.revendedores.$id'
+import { Route as PlatformSuporteIndexRouteImport } from './routes/platform.suporte.index'
+import { Route as PlatformSuporteIdRouteImport } from './routes/platform.suporte.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,14 +54,29 @@ const PlatformAssinaturasRoute = PlatformAssinaturasRouteImport.update({
   path: '/assinaturas',
   getParentRoute: () => PlatformRoute,
 } as any)
+const PlatformConfiguracoesRoute = PlatformConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => PlatformRoute,
+} as any)
 const PlatformDashboardRoute = PlatformDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => PlatformRoute,
 } as any)
+const PlatformDevelopersRoute = PlatformDevelopersRouteImport.update({
+  id: '/developers',
+  path: '/developers',
+  getParentRoute: () => PlatformRoute,
+} as any)
 const PlatformFinanceiroRoute = PlatformFinanceiroRouteImport.update({
   id: '/financeiro',
   path: '/financeiro',
+  getParentRoute: () => PlatformRoute,
+} as any)
+const PlatformIncidentesRoute = PlatformIncidentesRouteImport.update({
+  id: '/incidentes',
+  path: '/incidentes',
   getParentRoute: () => PlatformRoute,
 } as any)
 const PlatformLicencasRoute = PlatformLicencasRouteImport.update({
@@ -58,6 +87,16 @@ const PlatformLicencasRoute = PlatformLicencasRouteImport.update({
 const PlatformPlanosRoute = PlatformPlanosRouteImport.update({
   id: '/planos',
   path: '/planos',
+  getParentRoute: () => PlatformRoute,
+} as any)
+const PlatformReleasesRoute = PlatformReleasesRouteImport.update({
+  id: '/releases',
+  path: '/releases',
+  getParentRoute: () => PlatformRoute,
+} as any)
+const PlatformSegurancaRoute = PlatformSegurancaRouteImport.update({
+  id: '/seguranca',
+  path: '/seguranca',
   getParentRoute: () => PlatformRoute,
 } as any)
 const PlatformEscritoriosIndexRoute =
@@ -71,42 +110,130 @@ const PlatformEscritoriosIdRoute = PlatformEscritoriosIdRouteImport.update({
   path: '/escritorios/$id',
   getParentRoute: () => PlatformRoute,
 } as any)
+const PlatformInfraBancoRoute = PlatformInfraBancoRouteImport.update({
+  id: '/infra/banco',
+  path: '/infra/banco',
+  getParentRoute: () => PlatformRoute,
+} as any)
+const PlatformInfraCustosRoute = PlatformInfraCustosRouteImport.update({
+  id: '/infra/custos',
+  path: '/infra/custos',
+  getParentRoute: () => PlatformRoute,
+} as any)
+const PlatformInfraDominiosRoute = PlatformInfraDominiosRouteImport.update({
+  id: '/infra/dominios',
+  path: '/infra/dominios',
+  getParentRoute: () => PlatformRoute,
+} as any)
+const PlatformInfraFilasRoute = PlatformInfraFilasRouteImport.update({
+  id: '/infra/filas',
+  path: '/infra/filas',
+  getParentRoute: () => PlatformRoute,
+} as any)
+const PlatformInfraTrafegoRoute = PlatformInfraTrafegoRouteImport.update({
+  id: '/infra/trafego',
+  path: '/infra/trafego',
+  getParentRoute: () => PlatformRoute,
+} as any)
+const PlatformRevendedoresIndexRoute =
+  PlatformRevendedoresIndexRouteImport.update({
+    id: '/revendedores/',
+    path: '/revendedores/',
+    getParentRoute: () => PlatformRoute,
+  } as any)
+const PlatformRevendedoresIdRoute = PlatformRevendedoresIdRouteImport.update({
+  id: '/revendedores/$id',
+  path: '/revendedores/$id',
+  getParentRoute: () => PlatformRoute,
+} as any)
+const PlatformSuporteIndexRoute = PlatformSuporteIndexRouteImport.update({
+  id: '/suporte/',
+  path: '/suporte/',
+  getParentRoute: () => PlatformRoute,
+} as any)
+const PlatformSuporteIdRoute = PlatformSuporteIdRouteImport.update({
+  id: '/suporte/$id',
+  path: '/suporte/$id',
+  getParentRoute: () => PlatformRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/platform': typeof PlatformRouteWithChildren
   '/platform/assinaturas': typeof PlatformAssinaturasRoute
+  '/platform/configuracoes': typeof PlatformConfiguracoesRoute
   '/platform/dashboard': typeof PlatformDashboardRoute
+  '/platform/developers': typeof PlatformDevelopersRoute
   '/platform/financeiro': typeof PlatformFinanceiroRoute
+  '/platform/incidentes': typeof PlatformIncidentesRoute
   '/platform/licencas': typeof PlatformLicencasRoute
   '/platform/planos': typeof PlatformPlanosRoute
+  '/platform/releases': typeof PlatformReleasesRoute
+  '/platform/seguranca': typeof PlatformSegurancaRoute
   '/platform/': typeof PlatformIndexRoute
   '/platform/escritorios/$id': typeof PlatformEscritoriosIdRoute
+  '/platform/infra/banco': typeof PlatformInfraBancoRoute
+  '/platform/infra/custos': typeof PlatformInfraCustosRoute
+  '/platform/infra/dominios': typeof PlatformInfraDominiosRoute
+  '/platform/infra/filas': typeof PlatformInfraFilasRoute
+  '/platform/infra/trafego': typeof PlatformInfraTrafegoRoute
+  '/platform/revendedores/$id': typeof PlatformRevendedoresIdRoute
+  '/platform/suporte/$id': typeof PlatformSuporteIdRoute
   '/platform/escritorios/': typeof PlatformEscritoriosIndexRoute
+  '/platform/revendedores/': typeof PlatformRevendedoresIndexRoute
+  '/platform/suporte/': typeof PlatformSuporteIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/platform/assinaturas': typeof PlatformAssinaturasRoute
+  '/platform/configuracoes': typeof PlatformConfiguracoesRoute
   '/platform/dashboard': typeof PlatformDashboardRoute
+  '/platform/developers': typeof PlatformDevelopersRoute
   '/platform/financeiro': typeof PlatformFinanceiroRoute
+  '/platform/incidentes': typeof PlatformIncidentesRoute
   '/platform/licencas': typeof PlatformLicencasRoute
   '/platform/planos': typeof PlatformPlanosRoute
+  '/platform/releases': typeof PlatformReleasesRoute
+  '/platform/seguranca': typeof PlatformSegurancaRoute
   '/platform': typeof PlatformIndexRoute
   '/platform/escritorios/$id': typeof PlatformEscritoriosIdRoute
+  '/platform/infra/banco': typeof PlatformInfraBancoRoute
+  '/platform/infra/custos': typeof PlatformInfraCustosRoute
+  '/platform/infra/dominios': typeof PlatformInfraDominiosRoute
+  '/platform/infra/filas': typeof PlatformInfraFilasRoute
+  '/platform/infra/trafego': typeof PlatformInfraTrafegoRoute
+  '/platform/revendedores/$id': typeof PlatformRevendedoresIdRoute
+  '/platform/suporte/$id': typeof PlatformSuporteIdRoute
   '/platform/escritorios': typeof PlatformEscritoriosIndexRoute
+  '/platform/revendedores': typeof PlatformRevendedoresIndexRoute
+  '/platform/suporte': typeof PlatformSuporteIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/platform': typeof PlatformRouteWithChildren
   '/platform/assinaturas': typeof PlatformAssinaturasRoute
+  '/platform/configuracoes': typeof PlatformConfiguracoesRoute
   '/platform/dashboard': typeof PlatformDashboardRoute
+  '/platform/developers': typeof PlatformDevelopersRoute
   '/platform/financeiro': typeof PlatformFinanceiroRoute
+  '/platform/incidentes': typeof PlatformIncidentesRoute
   '/platform/licencas': typeof PlatformLicencasRoute
   '/platform/planos': typeof PlatformPlanosRoute
+  '/platform/releases': typeof PlatformReleasesRoute
+  '/platform/seguranca': typeof PlatformSegurancaRoute
   '/platform/': typeof PlatformIndexRoute
   '/platform/escritorios/$id': typeof PlatformEscritoriosIdRoute
+  '/platform/infra/banco': typeof PlatformInfraBancoRoute
+  '/platform/infra/custos': typeof PlatformInfraCustosRoute
+  '/platform/infra/dominios': typeof PlatformInfraDominiosRoute
+  '/platform/infra/filas': typeof PlatformInfraFilasRoute
+  '/platform/infra/trafego': typeof PlatformInfraTrafegoRoute
+  '/platform/revendedores/$id': typeof PlatformRevendedoresIdRoute
+  '/platform/suporte/$id': typeof PlatformSuporteIdRoute
   '/platform/escritorios/': typeof PlatformEscritoriosIndexRoute
+  '/platform/revendedores/': typeof PlatformRevendedoresIndexRoute
+  '/platform/suporte/': typeof PlatformSuporteIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -114,36 +241,78 @@ export interface FileRouteTypes {
     | '/'
     | '/platform'
     | '/platform/assinaturas'
+    | '/platform/configuracoes'
     | '/platform/dashboard'
+    | '/platform/developers'
     | '/platform/financeiro'
+    | '/platform/incidentes'
     | '/platform/licencas'
     | '/platform/planos'
+    | '/platform/releases'
+    | '/platform/seguranca'
     | '/platform/'
     | '/platform/escritorios/$id'
+    | '/platform/infra/banco'
+    | '/platform/infra/custos'
+    | '/platform/infra/dominios'
+    | '/platform/infra/filas'
+    | '/platform/infra/trafego'
+    | '/platform/revendedores/$id'
+    | '/platform/suporte/$id'
     | '/platform/escritorios/'
+    | '/platform/revendedores/'
+    | '/platform/suporte/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/platform/assinaturas'
+    | '/platform/configuracoes'
     | '/platform/dashboard'
+    | '/platform/developers'
     | '/platform/financeiro'
+    | '/platform/incidentes'
     | '/platform/licencas'
     | '/platform/planos'
+    | '/platform/releases'
+    | '/platform/seguranca'
     | '/platform'
     | '/platform/escritorios/$id'
+    | '/platform/infra/banco'
+    | '/platform/infra/custos'
+    | '/platform/infra/dominios'
+    | '/platform/infra/filas'
+    | '/platform/infra/trafego'
+    | '/platform/revendedores/$id'
+    | '/platform/suporte/$id'
     | '/platform/escritorios'
+    | '/platform/revendedores'
+    | '/platform/suporte'
   id:
     | '__root__'
     | '/'
     | '/platform'
     | '/platform/assinaturas'
+    | '/platform/configuracoes'
     | '/platform/dashboard'
+    | '/platform/developers'
     | '/platform/financeiro'
+    | '/platform/incidentes'
     | '/platform/licencas'
     | '/platform/planos'
+    | '/platform/releases'
+    | '/platform/seguranca'
     | '/platform/'
     | '/platform/escritorios/$id'
+    | '/platform/infra/banco'
+    | '/platform/infra/custos'
+    | '/platform/infra/dominios'
+    | '/platform/infra/filas'
+    | '/platform/infra/trafego'
+    | '/platform/revendedores/$id'
+    | '/platform/suporte/$id'
     | '/platform/escritorios/'
+    | '/platform/revendedores/'
+    | '/platform/suporte/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -181,6 +350,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlatformAssinaturasRouteImport
       parentRoute: typeof PlatformRoute
     }
+    '/platform/configuracoes': {
+      id: '/platform/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/platform/configuracoes'
+      preLoaderRoute: typeof PlatformConfiguracoesRouteImport
+      parentRoute: typeof PlatformRoute
+    }
     '/platform/dashboard': {
       id: '/platform/dashboard'
       path: '/dashboard'
@@ -188,11 +364,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlatformDashboardRouteImport
       parentRoute: typeof PlatformRoute
     }
+    '/platform/developers': {
+      id: '/platform/developers'
+      path: '/developers'
+      fullPath: '/platform/developers'
+      preLoaderRoute: typeof PlatformDevelopersRouteImport
+      parentRoute: typeof PlatformRoute
+    }
     '/platform/financeiro': {
       id: '/platform/financeiro'
       path: '/financeiro'
       fullPath: '/platform/financeiro'
       preLoaderRoute: typeof PlatformFinanceiroRouteImport
+      parentRoute: typeof PlatformRoute
+    }
+    '/platform/incidentes': {
+      id: '/platform/incidentes'
+      path: '/incidentes'
+      fullPath: '/platform/incidentes'
+      preLoaderRoute: typeof PlatformIncidentesRouteImport
       parentRoute: typeof PlatformRoute
     }
     '/platform/licencas': {
@@ -209,6 +399,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlatformPlanosRouteImport
       parentRoute: typeof PlatformRoute
     }
+    '/platform/releases': {
+      id: '/platform/releases'
+      path: '/releases'
+      fullPath: '/platform/releases'
+      preLoaderRoute: typeof PlatformReleasesRouteImport
+      parentRoute: typeof PlatformRoute
+    }
+    '/platform/seguranca': {
+      id: '/platform/seguranca'
+      path: '/seguranca'
+      fullPath: '/platform/seguranca'
+      preLoaderRoute: typeof PlatformSegurancaRouteImport
+      parentRoute: typeof PlatformRoute
+    }
     '/platform/escritorios/': {
       id: '/platform/escritorios/'
       path: '/escritorios'
@@ -223,29 +427,120 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlatformEscritoriosIdRouteImport
       parentRoute: typeof PlatformRoute
     }
+    '/platform/infra/banco': {
+      id: '/platform/infra/banco'
+      path: '/infra/banco'
+      fullPath: '/platform/infra/banco'
+      preLoaderRoute: typeof PlatformInfraBancoRouteImport
+      parentRoute: typeof PlatformRoute
+    }
+    '/platform/infra/custos': {
+      id: '/platform/infra/custos'
+      path: '/infra/custos'
+      fullPath: '/platform/infra/custos'
+      preLoaderRoute: typeof PlatformInfraCustosRouteImport
+      parentRoute: typeof PlatformRoute
+    }
+    '/platform/infra/dominios': {
+      id: '/platform/infra/dominios'
+      path: '/infra/dominios'
+      fullPath: '/platform/infra/dominios'
+      preLoaderRoute: typeof PlatformInfraDominiosRouteImport
+      parentRoute: typeof PlatformRoute
+    }
+    '/platform/infra/filas': {
+      id: '/platform/infra/filas'
+      path: '/infra/filas'
+      fullPath: '/platform/infra/filas'
+      preLoaderRoute: typeof PlatformInfraFilasRouteImport
+      parentRoute: typeof PlatformRoute
+    }
+    '/platform/infra/trafego': {
+      id: '/platform/infra/trafego'
+      path: '/infra/trafego'
+      fullPath: '/platform/infra/trafego'
+      preLoaderRoute: typeof PlatformInfraTrafegoRouteImport
+      parentRoute: typeof PlatformRoute
+    }
+    '/platform/revendedores/': {
+      id: '/platform/revendedores/'
+      path: '/revendedores'
+      fullPath: '/platform/revendedores/'
+      preLoaderRoute: typeof PlatformRevendedoresIndexRouteImport
+      parentRoute: typeof PlatformRoute
+    }
+    '/platform/revendedores/$id': {
+      id: '/platform/revendedores/$id'
+      path: '/revendedores/$id'
+      fullPath: '/platform/revendedores/$id'
+      preLoaderRoute: typeof PlatformRevendedoresIdRouteImport
+      parentRoute: typeof PlatformRoute
+    }
+    '/platform/suporte/': {
+      id: '/platform/suporte/'
+      path: '/suporte'
+      fullPath: '/platform/suporte/'
+      preLoaderRoute: typeof PlatformSuporteIndexRouteImport
+      parentRoute: typeof PlatformRoute
+    }
+    '/platform/suporte/$id': {
+      id: '/platform/suporte/$id'
+      path: '/suporte/$id'
+      fullPath: '/platform/suporte/$id'
+      preLoaderRoute: typeof PlatformSuporteIdRouteImport
+      parentRoute: typeof PlatformRoute
+    }
   }
 }
 
 interface PlatformRouteChildren {
   PlatformAssinaturasRoute: typeof PlatformAssinaturasRoute
+  PlatformConfiguracoesRoute: typeof PlatformConfiguracoesRoute
   PlatformDashboardRoute: typeof PlatformDashboardRoute
+  PlatformDevelopersRoute: typeof PlatformDevelopersRoute
   PlatformFinanceiroRoute: typeof PlatformFinanceiroRoute
+  PlatformIncidentesRoute: typeof PlatformIncidentesRoute
   PlatformLicencasRoute: typeof PlatformLicencasRoute
   PlatformPlanosRoute: typeof PlatformPlanosRoute
+  PlatformReleasesRoute: typeof PlatformReleasesRoute
+  PlatformSegurancaRoute: typeof PlatformSegurancaRoute
   PlatformIndexRoute: typeof PlatformIndexRoute
   PlatformEscritoriosIdRoute: typeof PlatformEscritoriosIdRoute
+  PlatformInfraBancoRoute: typeof PlatformInfraBancoRoute
+  PlatformInfraCustosRoute: typeof PlatformInfraCustosRoute
+  PlatformInfraDominiosRoute: typeof PlatformInfraDominiosRoute
+  PlatformInfraFilasRoute: typeof PlatformInfraFilasRoute
+  PlatformInfraTrafegoRoute: typeof PlatformInfraTrafegoRoute
+  PlatformRevendedoresIdRoute: typeof PlatformRevendedoresIdRoute
+  PlatformSuporteIdRoute: typeof PlatformSuporteIdRoute
   PlatformEscritoriosIndexRoute: typeof PlatformEscritoriosIndexRoute
+  PlatformRevendedoresIndexRoute: typeof PlatformRevendedoresIndexRoute
+  PlatformSuporteIndexRoute: typeof PlatformSuporteIndexRoute
 }
 
 const PlatformRouteChildren: PlatformRouteChildren = {
   PlatformAssinaturasRoute: PlatformAssinaturasRoute,
+  PlatformConfiguracoesRoute: PlatformConfiguracoesRoute,
   PlatformDashboardRoute: PlatformDashboardRoute,
+  PlatformDevelopersRoute: PlatformDevelopersRoute,
   PlatformFinanceiroRoute: PlatformFinanceiroRoute,
+  PlatformIncidentesRoute: PlatformIncidentesRoute,
   PlatformLicencasRoute: PlatformLicencasRoute,
   PlatformPlanosRoute: PlatformPlanosRoute,
+  PlatformReleasesRoute: PlatformReleasesRoute,
+  PlatformSegurancaRoute: PlatformSegurancaRoute,
   PlatformIndexRoute: PlatformIndexRoute,
   PlatformEscritoriosIdRoute: PlatformEscritoriosIdRoute,
+  PlatformInfraBancoRoute: PlatformInfraBancoRoute,
+  PlatformInfraCustosRoute: PlatformInfraCustosRoute,
+  PlatformInfraDominiosRoute: PlatformInfraDominiosRoute,
+  PlatformInfraFilasRoute: PlatformInfraFilasRoute,
+  PlatformInfraTrafegoRoute: PlatformInfraTrafegoRoute,
+  PlatformRevendedoresIdRoute: PlatformRevendedoresIdRoute,
+  PlatformSuporteIdRoute: PlatformSuporteIdRoute,
   PlatformEscritoriosIndexRoute: PlatformEscritoriosIndexRoute,
+  PlatformRevendedoresIndexRoute: PlatformRevendedoresIndexRoute,
+  PlatformSuporteIndexRoute: PlatformSuporteIndexRoute,
 }
 
 const PlatformRouteWithChildren = PlatformRoute._addFileChildren(
