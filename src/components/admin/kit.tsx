@@ -142,11 +142,11 @@ export function ChartPanel({ title, data, unit, type = "area", status = "demo", 
         <div style={{ height }} role="img" aria-label={`${title} — gráfico demonstrativo em ${unit}`}>
           <ResponsiveContainer width="100%" height="100%">
             {type === "bar" ? (
-              <BarChart data={shown}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="label" fontSize={11} stroke="var(--muted-foreground)" /><YAxis fontSize={11} stroke="var(--muted-foreground)" width={48} /><Tooltip formatter={(v) => [`${v} ${unit}`, title]} /><Bar dataKey="value" fill="var(--chart-1)" radius={[3, 3, 0, 0]} /></BarChart>
+              <BarChart data={shown}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="label" fontSize={11} stroke="var(--muted-foreground)" /><YAxis fontSize={11} stroke="var(--muted-foreground)" width={48} /><Tooltip formatter={(v) => [`${v} ${unit}`, title]} /><Bar isAnimationActive={false} dataKey="value" fill="var(--chart-1)" radius={[3, 3, 0, 0]} /></BarChart>
             ) : type === "line" ? (
-              <LineChart data={shown}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="label" fontSize={11} stroke="var(--muted-foreground)" /><YAxis fontSize={11} stroke="var(--muted-foreground)" width={48} /><Tooltip formatter={(v) => [`${v} ${unit}`, title]} /><Line dataKey="value" stroke="var(--chart-2)" strokeWidth={2} dot={false} /></LineChart>
+              <LineChart data={shown}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="label" fontSize={11} stroke="var(--muted-foreground)" /><YAxis fontSize={11} stroke="var(--muted-foreground)" width={48} /><Tooltip formatter={(v) => [`${v} ${unit}`, title]} /><Line isAnimationActive={false} dataKey="value" stroke="var(--chart-2)" strokeWidth={2} dot={false} /></LineChart>
             ) : (
-              <AreaChart data={shown}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="label" fontSize={11} stroke="var(--muted-foreground)" /><YAxis fontSize={11} stroke="var(--muted-foreground)" width={48} /><Tooltip formatter={(v) => [`${v} ${unit}`, title]} /><Area dataKey="value" stroke="var(--chart-1)" fill="var(--chart-1)" fillOpacity={0.12} strokeWidth={2} /></AreaChart>
+              <AreaChart data={shown}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="label" fontSize={11} stroke="var(--muted-foreground)" /><YAxis fontSize={11} stroke="var(--muted-foreground)" width={48} /><Tooltip formatter={(v) => [`${v} ${unit}`, title]} /><Area isAnimationActive={false} dataKey="value" stroke="var(--chart-1)" fill="var(--chart-1)" fillOpacity={0.12} strokeWidth={2} /></AreaChart>
             )}
           </ResponsiveContainer>
         </div>
