@@ -85,7 +85,7 @@ export function Panel({ title, description, actions, children, className }: { ti
 }
 
 export function KpiGrid({ children }: { children: ReactNode }) {
-  return <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">{children}</div>;
+  return <div className="grid grid-cols-2 gap-2 sm:gap-3 xl:grid-cols-4">{children}</div>;
 }
 
 /* ---------- Metric card ---------- */
@@ -94,20 +94,19 @@ export function MetricCard({ label, value, unit, delta, spark, status = "demo", 
 }) {
   const unavailable = status === "unavailable" || value === null;
   const body = (
-    <div className={cn("group relative flex h-full flex-col gap-2 overflow-hidden rounded-[var(--radius)] border bg-card p-4 shadow-[var(--shadow-card)] transition-all", to && "hover:-translate-y-px hover:border-primary/40 hover:shadow-[var(--shadow-raised)]")}>
+    <div className={cn("group relative flex h-full flex-col gap-2 overflow-hidden rounded-[var(--radius)] border bg-card p-3 sm:p-4 shadow-[var(--shadow-card)] transition-all", to && "hover:-translate-y-px hover:border-primary/40 hover:shadow-[var(--shadow-raised)]")}>
       <div className="flex items-center justify-between">
-        <span className="min-w-0 truncate text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</span>
-        <DemoDataBadge />
+        <span className="min-w-0 truncate text-[11px] font-medium uppercase tracking-wide text-muted-foreground sm:text-xs">{label}</span>
       </div>
       {unavailable ? (
         <div className="flex items-center gap-2 py-1 text-sm font-medium text-destructive"><WifiOff className="size-4" /> Fonte indisponível — sem valor</div>
       ) : (
         <div className="flex items-end justify-between gap-2">
-          <div className="tnum min-w-0 truncate text-2xl font-semibold tracking-tight">
+          <div className="tnum min-w-0 truncate text-lg font-semibold tracking-tight sm:text-2xl">
             {value}
             {unit && <span className="ml-1 text-sm font-normal text-muted-foreground">{unit}</span>}
           </div>
-          {spark && <Sparkline data={spark} />}
+          {spark && <span className="hidden sm:block"><Sparkline data={spark} /></span>}
         </div>
       )}
       <div className="flex items-center justify-between gap-2">
