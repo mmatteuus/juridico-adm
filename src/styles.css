@@ -50,7 +50,10 @@
   --color-danger-soft: var(--danger-soft);
   --color-info: var(--info);
   --color-info-soft: var(--info-soft);
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --shadow-card: 0 1px 2px oklch(0.2 0.03 255 / 0.05), 0 1px 1px oklch(0.2 0.03 255 / 0.03);
+  --shadow-raised: 0 8px 24px -12px oklch(0.2 0.03 255 / 0.18);
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-ring-offset-background: var(--background);
@@ -110,7 +113,7 @@
   --sidebar-accent-foreground: oklch(0.98 0 0);
   --sidebar-border: oklch(0.3 0.035 255);
   --sidebar-ring: oklch(0.72 0.1 200);
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
@@ -135,4 +138,15 @@
 
 @utility tnum {
   font-variant-numeric: tabular-nums;
+}
+
+@layer base {
+  h1, h2, h3 { letter-spacing: -0.015em; }
+  ::selection { background: var(--accent); color: var(--accent-foreground); }
+  html { -webkit-tap-highlight-color: transparent; }
+}
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }

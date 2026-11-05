@@ -99,7 +99,7 @@ function GlobalSearch() {
   return (
     <>
       <button type="button" onClick={() => setOpen(true)} className="flex h-9 w-full max-w-sm items-center gap-2 rounded-md border bg-background px-3 text-sm text-muted-foreground hover:border-primary/40">
-        <Search className="size-4" /><span className="flex-1 text-left">Buscar escritório, ticket, parceiro…</span><kbd className="hidden rounded border px-1 text-[10px] sm:inline">Ctrl K</kbd>
+        <Search className="size-4 shrink-0" /><span className="min-w-0 flex-1 truncate text-left"><span className="sm:hidden">Buscar…</span><span className="hidden sm:inline">Buscar escritório, ticket, parceiro…</span></span><kbd className="hidden rounded border px-1 text-[10px] sm:inline">Ctrl K</kbd>
       </button>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Pesquisar dados administrativos (DEMO)…" />
