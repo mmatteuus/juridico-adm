@@ -57,22 +57,22 @@ export function MetricSourceLabel({ source, status, period }: { source: string; 
 /* ---------- Layout ---------- */
 export function PageHeader({ title, description, actions }: { title: string; description?: string; actions?: ReactNode }) {
   return (
-    <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+    <div className="mb-6 flex flex-col gap-3 border-b pb-5 sm:flex-row sm:items-end sm:justify-between">
+      <div className="min-w-0">
+        <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">{title}</h1>
         {description && <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{description}</p>}
       </div>
-      {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
+      {actions && <div className="flex shrink-0 flex-wrap gap-2 [&>*]:flex-1 sm:[&>*]:flex-none">{actions}</div>}
     </div>
   );
 }
 
 export function Panel({ title, description, actions, children, className }: { title?: string; description?: string; actions?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <section className={cn("rounded-[var(--radius)] border bg-card shadow-[0_1px_2px_oklch(0.2_0.03_255/0.04)]", className)}>
+    <section className={cn("min-w-0 rounded-[var(--radius)] border bg-card shadow-[var(--shadow-card)]", className)}>
       {(title || actions) && (
         <header className="flex items-start justify-between gap-3 border-b px-4 py-3">
-          <div>
+          <div className="min-w-0">
             {title && <h2 className="text-sm font-semibold">{title}</h2>}
             {description && <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>}
           </div>
@@ -94,16 +94,16 @@ export function MetricCard({ label, value, unit, delta, spark, status = "demo", 
 }) {
   const unavailable = status === "unavailable" || value === null;
   const body = (
-    <div className="group flex h-full flex-col gap-2 rounded-[var(--radius)] border bg-card p-4 transition-colors hover:border-primary/40">
+    <div className=cn("group relative flex h-full flex-col gap-2 overflow-hidden rounded-[var(--radius)] border bg-card p-4 shadow-[var(--shadow-card)] transition-all", to && "hover:-translate-y-px hover:border-primary/40 hover:shadow-[var(--shadow-raised)]")>
       <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-muted-foreground">{label}</span>
+        <span className="min-w-0 truncate text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</span>
         <DemoDataBadge />
       </div>
       {unavailable ? (
         <div className="flex items-center gap-2 py-1 text-sm font-medium text-destructive"><WifiOff className="size-4" /> Fonte indisponível — sem valor</div>
       ) : (
         <div className="flex items-end justify-between gap-2">
-          <div className="tnum text-2xl font-semibold tracking-tight">
+          <div className="tnum min-w-0 truncate text-2xl font-semibold tracking-tight">
             {value}
             {unit && <span className="ml-1 text-sm font-normal text-muted-foreground">{unit}</span>}
           </div>
@@ -120,16 +120,19 @@ export function MetricCard({ label, value, unit, delta, spark, status = "demo", 
       <MetricSourceLabel source={source} status={status} />
     </div>
   );
-  return to ? <Link to={to} className="block rounded-[var(--radius)]">{body}</Link> : body;
+  return to ? <Link to={to} className="block rounded-[var(--radius)]" aria-label={`${label}: abrir detalhes`}>{body}</Link> : body;
 }
 
 function Sparkline({ data }: { data: number[] }) {
   const max = Math.max(...data, 1), min = Math.min(...data);
   const pts = data.map((v, i) => `${(i / (data.length - 1)) * 64},${22 - ((v - min) / (max - min || 1)) * 20}`).join(" ");
-  return <svg width="64" height="24" aria-hidden className="text-primary"><polyline points={pts} fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>;
+  return <svg width="64" height="24" aria-hidden className="shrink-0 text-primary"><polygon points={`0,24 ${pts} 64,24`} fill="currentColor" opacity="0.1" /><polyline points={pts} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /></svg>;
 }
 
 /* ---------- Charts ---------- */
+const TT = { background: "var(--popover)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12, boxShadow: "var(--shadow-raised)" };
+const compact = (v: number) => Intl.NumberFormat("pt-BR", { notation: "compact", maximumFractionDigits: 1 }).format(v);
+const fmtVal = (v: number, unit: string) => (v == null ? "sem dado" : unit === "R$" ? v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }) : `${v.toLocaleString("pt-BR")} ${unit}`);
 export function ChartPanel({ title, data, unit, type = "area", status = "demo", source, period, height = 220 }: {
   title: string; data: { label: string; value: number }[]; unit: string; type?: "area" | "bar" | "line"; status?: MetricStatus; source: string; period: string; height?: number;
 }) {
@@ -142,11 +145,11 @@ export function ChartPanel({ title, data, unit, type = "area", status = "demo", 
         <div style={{ height }} role="img" aria-label={`${title} — gráfico demonstrativo em ${unit}`}>
           <ResponsiveContainer width="100%" height="100%">
             {type === "bar" ? (
-              <BarChart data={shown}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="label" fontSize={11} stroke="var(--muted-foreground)" /><YAxis fontSize={11} stroke="var(--muted-foreground)" width={48} /><Tooltip formatter={(v) => [`${v} ${unit}`, title]} /><Bar isAnimationActive={false} dataKey="value" fill="var(--chart-1)" radius={[3, 3, 0, 0]} /></BarChart>
+              <BarChart data={shown}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="label" fontSize={11} stroke="var(--muted-foreground)" /><YAxis fontSize={11} stroke="var(--muted-foreground)" width={52} tickLine={false} axisLine={false} tickFormatter={(v) => compact(v)} /><Tooltip cursor={{ fill: "var(--muted)" }} contentStyle={TT} formatter={(v) => [fmtVal(v as number, unit), title]} /><Bar isAnimationActive={false} dataKey="value" fill="var(--chart-1)" radius={[3, 3, 0, 0]} /></BarChart>
             ) : type === "line" ? (
-              <LineChart data={shown}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="label" fontSize={11} stroke="var(--muted-foreground)" /><YAxis fontSize={11} stroke="var(--muted-foreground)" width={48} /><Tooltip formatter={(v) => [`${v} ${unit}`, title]} /><Line isAnimationActive={false} dataKey="value" stroke="var(--chart-2)" strokeWidth={2} dot={false} /></LineChart>
+              <LineChart data={shown}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="label" fontSize={11} stroke="var(--muted-foreground)" /><YAxis fontSize={11} stroke="var(--muted-foreground)" width={52} tickLine={false} axisLine={false} tickFormatter={(v) => compact(v)} /><Tooltip cursor={{ fill: "var(--muted)" }} contentStyle={TT} formatter={(v) => [fmtVal(v as number, unit), title]} /><Line isAnimationActive={false} dataKey="value" stroke="var(--chart-2)" strokeWidth={2} dot={false} /></LineChart>
             ) : (
-              <AreaChart data={shown}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="label" fontSize={11} stroke="var(--muted-foreground)" /><YAxis fontSize={11} stroke="var(--muted-foreground)" width={48} /><Tooltip formatter={(v) => [`${v} ${unit}`, title]} /><Area isAnimationActive={false} dataKey="value" stroke="var(--chart-1)" fill="var(--chart-1)" fillOpacity={0.12} strokeWidth={2} /></AreaChart>
+              <AreaChart data={shown}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="label" fontSize={11} stroke="var(--muted-foreground)" /><YAxis fontSize={11} stroke="var(--muted-foreground)" width={52} tickLine={false} axisLine={false} tickFormatter={(v) => compact(v)} /><Tooltip cursor={{ fill: "var(--muted)" }} contentStyle={TT} formatter={(v) => [fmtVal(v as number, unit), title]} /><Area isAnimationActive={false} dataKey="value" stroke="var(--chart-1)" fill="var(--chart-1)" fillOpacity={0.12} strokeWidth={2} /></AreaChart>
             )}
           </ResponsiveContainer>
         </div>
@@ -245,7 +248,7 @@ export function ConfirmationDialog({ open, onOpenChange, title, object, operatio
           <DialogTitle className="flex items-center gap-2">{title} <DemoDataBadge /></DialogTitle>
           <DialogDescription>Esta ação altera apenas o estado local da demonstração e gera um registro de auditoria DEMO.</DialogDescription>
         </DialogHeader>
-        <dl className="grid grid-cols-[110px_1fr] gap-x-3 gap-y-1.5 rounded-md bg-muted p-3 text-sm">
+        <dl className="grid grid-cols-[90px_1fr] gap-x-3 sm:grid-cols-[110px_1fr] gap-y-1.5 rounded-md bg-muted p-3 text-sm">
           <dt className="text-muted-foreground">Objeto</dt><dd className="font-medium">{object}</dd>
           <dt className="text-muted-foreground">Operação</dt><dd>{operation}</dd>
           <dt className="text-muted-foreground">Impacto</dt><dd>{impact}</dd>
@@ -254,9 +257,9 @@ export function ConfirmationDialog({ open, onOpenChange, title, object, operatio
         <div className="space-y-1.5">
           <Label htmlFor="justificativa">Justificativa obrigatória</Label>
           <Textarea id="justificativa" value={reason} onChange={(e) => setReason(e.target.value)} onBlur={() => setTouched(true)} aria-invalid={touched && invalid} aria-describedby="just-help" placeholder="Descreva o motivo (mín. 10 caracteres)" />
-          <p id="just-help" className={cn("text-xs", touched && invalid ? "text-destructive" : "text-muted-foreground")}>{touched && invalid ? "Informe ao menos 10 caracteres." : "Registrada na trilha de auditoria simulada."}</p>
+          <p id="just-help" className={cn("text-xs", touched && invalid ? "text-destructive" : "text-muted-foreground")}><span className="flex justify-between gap-2"><span>{touched && invalid ? "Informe ao menos 10 caracteres." : "Registrada na trilha de auditoria simulada."}</span><span className="tnum">{reason.trim().length}/10</span></span></p>
         </div>
-        <DialogFooter>
+        <DialogFooter className="gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
           <Button variant={destructive ? "destructive" : "default"} disabled={invalid} onClick={() => { onConfirm(reason.trim()); onOpenChange(false); }}>{confirmLabel}</Button>
         </DialogFooter>
@@ -278,7 +281,7 @@ export function ResourceTable<T>({ rows, columns, searchKeys, statusKey, statusO
   const filtered = useMemo(() => {
     let out = rows.filter((r) => searchKeys(r).toLowerCase().includes(q.toLowerCase()));
     if (statusKey && statuses.length) out = out.filter((r) => statuses.includes(statusKey(r)));
-    if (sort) { const col = columns.find((c) => c.key === sort.key); if (col?.sort) out = [...out].sort((a, b) => (col.sort!(a) > col.sort!(b) ? 1 : -1) * sort.dir); }
+    if (sort) { const col = columns.find((c) => c.key === sort.key); if (col?.sort) { const f = col.sort; out = [...out].sort((a, b) => { const x = f(a), y = f(b); return (typeof x === "number" && typeof y === "number" ? x - y : String(x).localeCompare(String(y), "pt-BR", { numeric: true })) * sort.dir; }); } }
     return out;
   }, [rows, q, statuses, sort, columns, searchKeys, statusKey]);
   const pages = Math.max(1, Math.ceil(filtered.length / pageSize));
@@ -288,17 +291,17 @@ export function ResourceTable<T>({ rows, columns, searchKeys, statusKey, statusO
   const exportCsv = () => {
     const head = columns.map((c) => c.header).join(";");
     const body = filtered.map((r) => columns.map((c) => { const v = c.sort ? c.sort(r) : ""; return `"${String(v).replace(/"/g, '""')}"`; }).join(";")).join("\n");
-    const blob = new Blob([`# DADOS DEMONSTRATIVOS\n${head}\n${body}`], { type: "text/csv" });
+    const blob = new Blob(["\uFEFF" + `# DADOS DEMONSTRATIVOS\n${head}\n${body}`], { type: "text/csv" });
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${csvName ?? "export"}-demo.csv`; a.click();
   };
 
   return (
-    <div className="rounded-[var(--radius)] border bg-card">
+    <div className="min-w-0 rounded-[var(--radius)] border bg-card shadow-[var(--shadow-card)]">
       <div className="flex flex-col gap-2 border-b p-3 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-1 flex-wrap items-center gap-2">
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
           <div className="relative w-full sm:w-64">
             <Search className="pointer-events-none absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
-            <Input aria-label="Buscar na tabela" placeholder="Buscar…" value={q} onChange={(e) => { setQ(e.target.value); setPage(0); }} className="h-9 pl-8" />
+            <Input type="search" aria-label="Buscar na tabela" placeholder="Buscar…" value={q} onChange={(e) => { setQ(e.target.value); setPage(0); }} className="h-9 pl-8" />
           </div>
           {statusOptions?.map((s) => {
             const on = statuses.includes(s);
@@ -314,9 +317,9 @@ export function ResourceTable<T>({ rows, columns, searchKeys, statusKey, statusO
       </div>
       {slice.length === 0 ? <EmptyState title="Nenhum resultado" text={emptyText ?? "Ajuste a busca ou os filtros."} /> : (
         <>
-          <div className="hidden overflow-x-auto md:block">
+          <div className="scrollbar-thin hidden overflow-x-auto md:block">
             <table className="w-full text-sm">
-              <thead><tr className="border-b bg-muted/50 text-left text-xs text-muted-foreground">
+              <thead className="sticky top-0 z-10"><tr className="border-b bg-muted text-left text-[11px] uppercase tracking-wide text-muted-foreground">
                 {columns.map((c) => (
                   <th key={c.key} scope="col" className={cn("px-3 py-2 font-medium", c.className)}>
                     {c.sort ? (
@@ -331,7 +334,7 @@ export function ResourceTable<T>({ rows, columns, searchKeys, statusKey, statusO
                 {slice.map((r) => (
                   <tr key={getId(r)} className="border-b last:border-0 hover:bg-muted/40">
                     {columns.map((c, i) => (
-                      <td key={c.key} className={cn("tnum px-3 py-2.5", c.className)}>
+                      <td key={c.key} className={cn("tnum whitespace-nowrap px-3 py-2.5", c.className)}>
                         {i === 0 && rowLink ? <Link to={rowLink(r)} className="font-medium text-primary hover:underline">{c.cell(r)}</Link> : c.cell(r)}
                       </td>
                     ))}
@@ -342,13 +345,16 @@ export function ResourceTable<T>({ rows, columns, searchKeys, statusKey, statusO
           </div>
           <ul className="divide-y md:hidden">
             {slice.map((r) => (
-              <li key={getId(r)} className="space-y-1.5 p-3">
-                {columns.filter((c) => !c.mobileHidden).map((c, i) => (
-                  <div key={c.key} className="flex items-center justify-between gap-3 text-sm">
-                    <span className="text-xs text-muted-foreground">{c.header}</span>
-                    {i === 0 && rowLink ? <Link to={rowLink(r)} className="text-right font-medium text-primary">{c.cell(r)}</Link> : <span className="tnum text-right">{c.cell(r)}</span>}
-                  </div>
-                ))}
+              <li key={getId(r)} className="space-y-2 p-3">
+                <div className="min-w-0 text-sm font-medium">{rowLink ? <Link to={rowLink(r)} className="block truncate text-primary">{columns[0].cell(r)}</Link> : columns[0].cell(r)}</div>
+                <dl className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+                  {columns.slice(1).filter((c) => !c.mobileHidden).map((c) => (
+                    <div key={c.key} className="min-w-0">
+                      <dt className="text-[11px] text-muted-foreground">{c.header}</dt>
+                      <dd className="tnum truncate text-sm">{c.cell(r)}</dd>
+                    </div>
+                  ))}
+                </dl>
               </li>
             ))}
           </ul>
@@ -367,10 +373,10 @@ export function ResourceTable<T>({ rows, columns, searchKeys, statusKey, statusO
 
 export function Segmented<T extends string>({ value, onChange, options, label }: { value: T; onChange: (v: T) => void; options: readonly T[]; label: string }) {
   return (
-    <div role="radiogroup" aria-label={label} className="inline-flex rounded-md border bg-card p-0.5">
+    <div role="radiogroup" aria-label={label} className="scrollbar-thin inline-flex max-w-full overflow-x-auto rounded-md border bg-card p-0.5">
       {options.map((o) => (
         <button key={o} role="radio" aria-checked={value === o} type="button" onClick={() => onChange(o)}
-          className={cn("rounded px-2.5 py-1 text-xs font-medium transition-colors", value === o ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>{o}</button>
+          className={cn("shrink-0 whitespace-nowrap rounded px-2.5 py-1 text-xs font-medium transition-colors", value === o ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>{o}</button>
       ))}
     </div>
   );
