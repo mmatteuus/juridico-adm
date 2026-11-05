@@ -94,7 +94,7 @@ export function MetricCard({ label, value, unit, delta, spark, status = "demo", 
 }) {
   const unavailable = status === "unavailable" || value === null;
   const body = (
-    <div className=cn("group relative flex h-full flex-col gap-2 overflow-hidden rounded-[var(--radius)] border bg-card p-4 shadow-[var(--shadow-card)] transition-all", to && "hover:-translate-y-px hover:border-primary/40 hover:shadow-[var(--shadow-raised)]")>
+    <div className={cn("group relative flex h-full flex-col gap-2 overflow-hidden rounded-[var(--radius)] border bg-card p-4 shadow-[var(--shadow-card)] transition-all", to && "hover:-translate-y-px hover:border-primary/40 hover:shadow-[var(--shadow-raised)]")}>
       <div className="flex items-center justify-between">
         <span className="min-w-0 truncate text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</span>
         <DemoDataBadge />
