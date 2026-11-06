@@ -12,7 +12,15 @@ import { FEATURE_FLAGS } from "@/features/demo/fixtures";
 import type { PlanVersion } from "@/features/demo/types";
 
 export const Route = createFileRoute("/platform/planos")({
-  head: () => ({ meta: [{ title: "Planos — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Planos — JURIDO SuperAdmin" },
+    { name: "description", content: "Catálogo versionado de planos, benefícios e limites comerciais do JURIDO." },
+    { property: "og:title", content: "Planos — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Catálogo versionado de planos, benefícios e limites comerciais do JURIDO." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: Planos,
 });
 

@@ -5,7 +5,15 @@ import { Button } from "@/components/ui/button";
 import { actions, fmtDateTime, useDemo } from "@/features/demo/store";
 
 export const Route = createFileRoute("/platform/incidentes")({
-  head: () => ({ meta: [{ title: "Incidentes — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Incidentes — JURIDO SuperAdmin" },
+    { name: "description", content: "Incidentes, severidade e acompanhamento operacional do JURIDO em demonstração." },
+    { property: "og:title", content: "Incidentes — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Incidentes, severidade e acompanhamento operacional do JURIDO em demonstração." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: Incidentes,
 });
 

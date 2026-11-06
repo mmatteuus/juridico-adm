@@ -11,7 +11,15 @@ import { actions, fmtDateTime, useDemo } from "@/features/demo/store";
 import type { SupportTicket } from "@/features/demo/types";
 
 export const Route = createFileRoute("/platform/suporte/")({
-  head: () => ({ meta: [{ title: "Suporte — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Suporte — JURIDO SuperAdmin" },
+    { name: "description", content: "Chamados, prioridades e acompanhamento do suporte aos escritórios JURIDO." },
+    { property: "og:title", content: "Suporte — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Chamados, prioridades e acompanhamento do suporte aos escritórios JURIDO." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: Suporte,
 });
 
@@ -48,7 +56,7 @@ function Suporte() {
             { key: "id", header: "ID", cell: (t) => t.id, sort: (t) => t.id },
             { key: "sub", header: "Assunto", cell: (t) => t.subject, sort: (t) => t.subject },
             { key: "ten", header: "Escritório", cell: (t) => name(t.tenantId), sort: (t) => name(t.tenantId), mobileHidden: true },
-            { key: "p", header: "Prioridade", cell: (t) => <StatusBadge status={t.priority} />, sort: (t) => ["urgente", "alta", "media", "baixa"].indexOf(t.priority) },
+            { key: "p", header: "Prioridade", cell: (t) => <StatusBadge status={t.priority} />, sort: (t) => ["urgente", "alta", "media", "baixa"].indexOf(t.priority), exportValue: (t) => t.priority },
             { key: "s", header: "Status", cell: (t) => <StatusBadge status={t.status} />, sort: (t) => t.status },
             { key: "c", header: "Categoria", cell: (t) => t.category, sort: (t) => t.category, mobileHidden: true },
             { key: "a", header: "Responsável", cell: (t) => t.assigneeId ?? "—", sort: (t) => t.assigneeId ?? "", mobileHidden: true },

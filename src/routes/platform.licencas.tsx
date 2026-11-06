@@ -7,7 +7,15 @@ import { actions, fmtDate, useDemo } from "@/features/demo/store";
 import type { EntitlementGrant } from "@/features/demo/types";
 
 export const Route = createFileRoute("/platform/licencas")({
-  head: () => ({ meta: [{ title: "Licenças — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Licenças — JURIDO SuperAdmin" },
+    { name: "description", content: "Licenças, limites de assentos e direitos comerciais dos escritórios JURIDO em demonstração." },
+    { property: "og:title", content: "Licenças — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Licenças, limites de assentos e direitos comerciais dos escritórios JURIDO em demonstração." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: Licencas,
 });
 

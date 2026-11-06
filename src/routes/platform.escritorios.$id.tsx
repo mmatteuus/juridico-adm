@@ -12,7 +12,15 @@ import { ADDONS } from "@/features/demo/fixtures";
 import { canAccess } from "@/features/demo/roles";
 
 export const Route = createFileRoute("/platform/escritorios/$id")({
-  head: () => ({ meta: [{ title: "Ficha do escritório — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Ficha do escritório — JURIDO SuperAdmin" },
+    { name: "description", content: "Ficha comercial do escritório, assinatura, licenças e histórico no JURIDO SuperAdmin." },
+    { property: "og:title", content: "Ficha do escritório — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Ficha comercial do escritório, assinatura, licenças e histórico no JURIDO SuperAdmin." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: TenantDetail,
 });
 

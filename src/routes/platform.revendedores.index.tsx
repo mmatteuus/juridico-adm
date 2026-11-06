@@ -11,7 +11,15 @@ import { actions, brl, useDemo } from "@/features/demo/store";
 import type { Reseller } from "@/features/demo/types";
 
 export const Route = createFileRoute("/platform/revendedores/")({
-  head: () => ({ meta: [{ title: "Revendedores — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Revendedores — JURIDO SuperAdmin" },
+    { name: "description", content: "Parceiros comerciais, carteira e comissões demonstrativas do software JURIDO." },
+    { property: "og:title", content: "Revendedores — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Parceiros comerciais, carteira e comissões demonstrativas do software JURIDO." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: Revendedores,
 });
 

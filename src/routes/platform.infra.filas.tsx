@@ -6,7 +6,15 @@ import { Panel, StatusBadge, UnavailableState } from "@/components/admin/kit";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/platform/infra/filas")({
-  head: () => ({ meta: [{ title: "Filas e jobs — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Filas e jobs — JURIDO SuperAdmin" },
+    { name: "description", content: "Filas, jobs e reprocessamento demonstrativo da plataforma JURIDO." },
+    { property: "og:title", content: "Filas e jobs — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Filas, jobs e reprocessamento demonstrativo da plataforma JURIDO." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: Filas,
 });
 

@@ -4,7 +4,15 @@ import { brl, financeTotals, fmtDate, fmtDateTime, useDemo } from "@/features/de
 import type { SubscriptionSummary } from "@/features/demo/types";
 
 export const Route = createFileRoute("/platform/assinaturas")({
-  head: () => ({ meta: [{ title: "Assinaturas — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Assinaturas — JURIDO SuperAdmin" },
+    { name: "description", content: "Assinaturas, MRR contratual e histórico de mudanças de plano do JURIDO." },
+    { property: "og:title", content: "Assinaturas — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Assinaturas, MRR contratual e histórico de mudanças de plano do JURIDO." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: Assinaturas,
 });
 

@@ -12,7 +12,15 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { actions, useDemo } from "@/features/demo/store";
 
 export const Route = createFileRoute("/platform/developers")({
-  head: () => ({ meta: [{ title: "Developer Platform — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Developer Platform — JURIDO SuperAdmin" },
+    { name: "description", content: "Aplicações de terceiros, escopos e métricas demonstrativas da API JURIDO." },
+    { property: "og:title", content: "Developer Platform — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Aplicações de terceiros, escopos e métricas demonstrativas da API JURIDO." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: Developers,
 });
 

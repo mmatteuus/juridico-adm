@@ -8,7 +8,15 @@ const PROVIDERS = [{ name: "Cloudflare (Workers, R2, Queues)", value: 412000 }, 
 const BUDGET = 1500000;
 
 export const Route = createFileRoute("/platform/infra/custos")({
-  head: () => ({ meta: [{ title: "Custos (FinOps) — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Custos (FinOps) — JURIDO SuperAdmin" },
+    { name: "description", content: "Estimativas de custos por provedor e escritório da plataforma JURIDO." },
+    { property: "og:title", content: "Custos (FinOps) — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Estimativas de custos por provedor e escritório da plataforma JURIDO." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: Custos,
 });
 

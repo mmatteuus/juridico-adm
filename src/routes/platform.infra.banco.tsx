@@ -3,7 +3,15 @@ import { InfraPage } from "@/components/admin/InfraPage";
 import { Panel, StatusBadge, UnavailableState } from "@/components/admin/kit";
 
 export const Route = createFileRoute("/platform/infra/banco")({
-  head: () => ({ meta: [{ title: "Banco (Neon) — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Banco (Neon) — JURIDO SuperAdmin" },
+    { name: "description", content: "Métricas demonstrativas do banco Neon compartilhado pela plataforma JURIDO." },
+    { property: "og:title", content: "Banco (Neon) — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Métricas demonstrativas do banco Neon compartilhado pela plataforma JURIDO." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: () => (
     <InfraPage title="Observabilidade do banco (Neon)" description="Métricas do projeto Neon compartilhado. Valores por escritório são apenas estimativas." source="Neon PostgreSQL (não conectado)"
       metrics={[
