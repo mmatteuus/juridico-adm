@@ -9,7 +9,15 @@ import { ROLES } from "@/features/demo/roles";
 import type { AuditEvent, RoleKey, StaffMember } from "@/features/demo/types";
 
 export const Route = createFileRoute("/platform/seguranca")({
-  head: () => ({ meta: [{ title: "Segurança — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Segurança — JURIDO SuperAdmin" },
+    { name: "description", content: "Equipe, perfis de demonstração e trilha de auditoria do JURIDO SuperAdmin." },
+    { property: "og:title", content: "Segurança — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Equipe, perfis de demonstração e trilha de auditoria do JURIDO SuperAdmin." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: Seguranca,
 });
 
@@ -46,7 +54,7 @@ function Seguranca() {
             { key: "o", header: "Objeto", cell: (a) => `${a.objectType}:${a.objectId}`, sort: (a) => a.objectId },
             { key: "r", header: "Perfil", cell: (a) => ROLES[a.actorRole], sort: (a) => a.actorRole, mobileHidden: true },
             { key: "out", header: "Resultado", cell: (a) => <StatusBadge status={a.outcome} tone="warning" />, sort: (a) => a.outcome },
-            { key: "j", header: "Justificativa", cell: (a) => a.reason ?? "—", mobileHidden: true },
+            { key: "j", header: "Justificativa", cell: (a) => a.reason ?? "—", exportValue: (a) => a.reason ?? "", mobileHidden: true },
           ]} />
       </div>
       <ConfirmationDialog open={!!roleOp} onOpenChange={(o) => !o && setRoleOp(null)} title="Alterar perfil" object={roleOp?.name ?? ""} operation="Mudança de papel da equipe" impact="Altera as telas visíveis para este membro (simulado)." onConfirm={(r) => { actions.setStaffRole(roleOp!.id, newRole, r); toast.success("Perfil alterado (DEMO)"); }}>

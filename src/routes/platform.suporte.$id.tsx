@@ -11,7 +11,15 @@ import { STAFF_NAMES } from "@/features/demo/fixtures";
 import type { SupportTicket } from "@/features/demo/types";
 
 export const Route = createFileRoute("/platform/suporte/$id")({
-  head: () => ({ meta: [{ title: "Chamado — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Chamado — JURIDO SuperAdmin" },
+    { name: "description", content: "Histórico, respostas e gestão de um chamado de suporte JURIDO em demonstração." },
+    { property: "og:title", content: "Chamado — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Histórico, respostas e gestão de um chamado de suporte JURIDO em demonstração." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: TicketDetail,
 });
 

@@ -2,7 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { InfraPage } from "@/components/admin/InfraPage";
 
 export const Route = createFileRoute("/platform/infra/trafego")({
-  head: () => ({ meta: [{ title: "Workers e API — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Workers e API — JURIDO SuperAdmin" },
+    { name: "description", content: "Requisições, latência e erros demonstrativos dos Workers e API JURIDO." },
+    { property: "og:title", content: "Workers e API — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Requisições, latência e erros demonstrativos dos Workers e API JURIDO." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: () => (
     <InfraPage withApp title="Workers e API" description="Requisições, latência e erros por app e período." source="Cloudflare Workers (não conectado)"
       metrics={[

@@ -10,7 +10,15 @@ const HOSTS = [
 ];
 
 export const Route = createFileRoute("/platform/infra/dominios")({
-  head: () => ({ meta: [{ title: "Domínios — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Domínios — JURIDO SuperAdmin" },
+    { name: "description", content: "Domínios, TLS e segurança de borda demonstrativos da plataforma JURIDO." },
+    { property: "og:title", content: "Domínios — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Domínios, TLS e segurança de borda demonstrativos da plataforma JURIDO." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: () => (
     <InfraPage title="Domínios e segurança de borda" description="Hostnames, TLS, tráfego e WAF. Nenhum status aqui é verificação real." source="Cloudflare DNS/WAF (não conectado)"
       metrics={[

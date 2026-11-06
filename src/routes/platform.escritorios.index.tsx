@@ -11,7 +11,15 @@ import { actions, fmtDate, useDemo } from "@/features/demo/store";
 import type { TenantSummary } from "@/features/demo/types";
 
 export const Route = createFileRoute("/platform/escritorios/")({
-  head: () => ({ meta: [{ title: "Escritórios — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Escritórios — JURIDO SuperAdmin" },
+    { name: "description", content: "Contas de escritórios, planos e consumo agregado no JURIDO SuperAdmin." },
+    { property: "og:title", content: "Escritórios — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Contas de escritórios, planos e consumo agregado no JURIDO SuperAdmin." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: Escritorios,
 });
 
@@ -32,11 +40,11 @@ function Escritorios() {
         columns={[
           { key: "name", header: "Escritório", cell: (t) => t.displayName, sort: (t) => t.displayName },
           { key: "status", header: "Status", cell: (t) => <StatusBadge status={t.status} />, sort: (t) => t.status },
-          { key: "plan", header: "Plano", cell: (t) => planName(t.planId), sort: (t) => t.planId },
-          { key: "seats", header: "Assentos", cell: (t) => `${t.activeSeats}/${t.seatLimit}`, sort: (t) => t.activeSeats },
+          { key: "plan", header: "Plano", cell: (t) => planName(t.planId), sort: (t) => t.planId, exportValue: (t) => planName(t.planId) },
+          { key: "seats", header: "Assentos", cell: (t) => `${t.activeSeats}/${t.seatLimit}`, sort: (t) => t.activeSeats, exportValue: (t) => `${t.activeSeats}/${t.seatLimit}` },
           { key: "storage", header: "Consumo", cell: (t) => `${t.storageGb} GB`, sort: (t) => t.storageGb, mobileHidden: true },
           { key: "am", header: "Resp. comercial", cell: (t) => t.accountManager, sort: (t) => t.accountManager, mobileHidden: true },
-          { key: "partner", header: "Parceiro", cell: (t) => resellers.find((r) => r.id === t.sourcePartnerId)?.name ?? "Direto", sort: (t) => t.sourcePartnerId ?? "", mobileHidden: true },
+          { key: "partner", header: "Parceiro", cell: (t) => resellers.find((r) => r.id === t.sourcePartnerId)?.name ?? "Direto", sort: (t) => t.sourcePartnerId ?? "", exportValue: (t) => resellers.find((r) => r.id === t.sourcePartnerId)?.name ?? "Direto", mobileHidden: true },
           { key: "billing", header: "Próx. cobrança", cell: (t) => fmtDate(t.nextBillingDate), sort: (t) => t.nextBillingDate, mobileHidden: true },
         ]}
       />

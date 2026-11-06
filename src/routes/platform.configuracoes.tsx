@@ -10,7 +10,15 @@ import { actions, useDemo } from "@/features/demo/store";
 import { ROLES } from "@/features/demo/roles";
 
 export const Route = createFileRoute("/platform/configuracoes")({
-  head: () => ({ meta: [{ title: "Configurações — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Configurações — JURIDO SuperAdmin" },
+    { name: "description", content: "Preferências do operador e políticas comerciais demonstrativas do JURIDO SuperAdmin." },
+    { property: "og:title", content: "Configurações — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Preferências do operador e políticas comerciais demonstrativas do JURIDO SuperAdmin." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: Config,
 });
 

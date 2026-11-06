@@ -5,7 +5,15 @@ import { brl, financeTotals, fmtDateTime, useDemo } from "@/features/demo/store"
 import { metricStatus, series, type Period } from "@/features/demo/metrics";
 
 export const Route = createFileRoute("/platform/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Dashboard — JURIDO SuperAdmin" },
+    { name: "description", content: "Indicadores comerciais, receita e operação técnica da plataforma JURIDO em demonstração." },
+    { property: "og:title", content: "Dashboard — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Indicadores comerciais, receita e operação técnica da plataforma JURIDO em demonstração." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: Dashboard,
 });
 

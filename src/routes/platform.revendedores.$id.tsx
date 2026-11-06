@@ -11,7 +11,15 @@ import { actions, brl, fmtDate, useDemo } from "@/features/demo/store";
 import type { CommissionEntry } from "@/features/demo/types";
 
 export const Route = createFileRoute("/platform/revendedores/$id")({
-  head: () => ({ meta: [{ title: "Parceiro — JURIDO SuperAdmin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Parceiro — JURIDO SuperAdmin" },
+    { name: "description", content: "Carteira, leads e extrato demonstrativo do parceiro comercial JURIDO." },
+    { property: "og:title", content: "Parceiro — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Carteira, leads e extrato demonstrativo do parceiro comercial JURIDO." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: ResellerDetail,
 });
 
