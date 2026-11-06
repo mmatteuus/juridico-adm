@@ -32,6 +32,8 @@ export interface PlanVersion {
   status: "ativo" | "rascunho" | "arquivado";
 }
 
+export interface Domain { id: string; domain: string; tenantId: string; status: "verified" | "pending" | "failed"; createdAt: string; }
+
 export interface EntitlementGrant {
   id: string;
   tenantId: string;
