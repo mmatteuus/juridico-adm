@@ -1,7 +1,7 @@
 // Deterministic synthetic fixtures. Fictional companies only — no real CPF/CNPJ, tokens or accounts.
 import type {
-  AppRelease, AuditEvent, CommissionEntry, EntitlementGrant, Incident, Notification, PlanVersion,
-  Reseller, SaasInvoice, StaffMember, SubscriptionSummary, SupportTicket, TenantSummary, ThirdPartyApp,
+  AppRelease, AuditEvent, CommissionEntry, DomainHealth, EntitlementGrant, Incident, Notification, PlanVersion,
+  PlatformSettings, ProviderCostAllocation, QueueJob, Reseller, SaasInvoice, StaffMember, SubscriptionSummary, SupportTicket, TenantSummary, ThirdPartyApp,
 } from "./types";
 
 function rng(seed: number) {
@@ -148,7 +148,33 @@ export const INCIDENTS: Incident[] = [
   { id: "INC-29", title: "Indisponibilidade parcial do portal do cliente", severity: "SEV1", service: "client-portal", status: "resolvido", startedAt: day(-19), timeline: [{ when: day(-19), text: "Erro 5xx em 12% das requisições." }, { when: day(-18.9), text: "Rollback do client-portal 0.9.0." }] },
 ];
 
-export const STAFF: StaffMember[] = STAFF_NAMES.map((n, i) => ({ id: `st-${i}`, name: n, role: (["owner", "ops", "support", "finance", "sales", "security"] as const)[i], mfa: i !== 4, lastSeen: day(-i * 0.4), sessions: 1 + (i % 3), active: true }));
+export const QUEUE_JOBS: QueueJob[] = [
+  { name: "notificacoes", worker: "notify-worker", depth: 14, oldestAgeMinutes: 2, retries: 3, deadLetterCount: 3, averageProcessingMs: 1200, status: "saudavel" },
+  { name: "documentos-ocr", worker: "ocr-container", depth: 68, oldestAgeMinutes: 22, retries: 19, deadLetterCount: 7, averageProcessingMs: 14000, status: "degradado" },
+  { name: "faturamento", worker: "billing-worker", depth: 5, oldestAgeMinutes: 1, retries: 0, deadLetterCount: 0, averageProcessingMs: 800, status: "saudavel" },
+  { name: "relatorios", worker: "reports-container", depth: 9, oldestAgeMinutes: 8, retries: 2, deadLetterCount: 1, averageProcessingMs: 32000, status: "saudavel" },
+];
+
+export const DOMAIN_HEALTH: DomainHealth[] = [
+  { hostname: "admin.jurido.demo", app: "platform-admin", tlsStatus: "demo", wafStatus: "ativo" },
+  { hostname: "app.jurido.demo", app: "office-web", tlsStatus: "demo", wafStatus: "ativo" },
+  { hostname: "portal.jurido.demo", app: "client-portal", tlsStatus: "partial", wafStatus: "planejado" },
+  { hostname: "api.jurido.demo", app: "api", tlsStatus: "demo", wafStatus: "ativo" },
+];
+
+export const PROVIDER_COSTS: ProviderCostAllocation[] = [
+  { provider: "Cloudflare (Workers, R2, Queues)", amountMinor: 412000, quality: "estimativa" },
+  { provider: "Neon PostgreSQL", amountMinor: 538000, quality: "estimativa" },
+  { provider: "E-mail transacional", amountMinor: 96000, quality: "estimativa" },
+  { provider: "Observabilidade", amountMinor: 202000, quality: "estimativa" },
+];
+export const MONTHLY_PROVIDER_BUDGET_MINOR = 1500000;
+export const PLATFORM_SETTINGS: PlatformSettings = {
+  name: "Marina Okada", email: "operadora@jurido.demo", grace: 10, trial: 14,
+  notifyIncidents: true, notifyBilling: true, notifyTickets: false,
+};
+
+export const STAFF: StaffMember[] = STAFF_NAMES.map((n, i) => ({ id: `st-${i}`, name: n, role: (["owner", "ops", "support", "finance", "sales", "security"] as const)[i], mfa: i !== 4, lastSeen: day(-i * 0.4), sessions: 1 + (i % 3), active: true, accessStatus: "ativo" }));
 
 export const AUDIT: AuditEvent[] = [
   { id: "au-1", actorRole: "owner", action: "entitlement.grant", objectType: "tenant", objectId: "tn-101", when: day(-10), outcome: "simulado", reason: "Piloto comercial aprovado" },

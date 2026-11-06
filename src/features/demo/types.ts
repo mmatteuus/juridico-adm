@@ -115,6 +115,30 @@ export interface SupportTicket {
 
 export type MetricStatus = "demo" | "estimate" | "partial" | "unavailable";
 
+export interface QueueJob {
+  name: string;
+  worker: string;
+  depth: number;
+  oldestAgeMinutes: number;
+  retries: number;
+  deadLetterCount: number;
+  averageProcessingMs: number;
+  status: "saudavel" | "degradado";
+}
+
+export interface DomainHealth {
+  hostname: string;
+  app: string;
+  tlsStatus: "demo" | "partial";
+  wafStatus: "ativo" | "planejado";
+}
+
+export interface ProviderCostAllocation {
+  provider: string;
+  amountMinor: number;
+  quality: "estimativa" | "medido";
+}
+
 export interface AuditEvent {
   id: string;
   actorRole: RoleKey;
@@ -167,6 +191,7 @@ export interface StaffMember {
   lastSeen: string;
   sessions: number;
   active: boolean;
+  accessStatus: "ativo" | "convite_pendente" | "suspenso";
 }
 
 export interface Notification {
@@ -175,4 +200,14 @@ export interface Notification {
   to: string;
   when: string;
   read: boolean;
+}
+
+export interface PlatformSettings {
+  name: string;
+  email: string;
+  grace: number;
+  trial: number;
+  notifyIncidents: boolean;
+  notifyBilling: boolean;
+  notifyTickets: boolean;
 }

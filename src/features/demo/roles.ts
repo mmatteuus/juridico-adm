@@ -12,6 +12,7 @@ export const ROLES: Record<RoleKey, string> = {
 /** Route section -> roles allowed (DEMO only — not real security). */
 export const SECTION_ACCESS: Record<string, RoleKey[]> = {
   dashboard: ["owner", "ops", "support", "finance", "sales", "security"],
+  contas: ["owner", "security"],
   escritorios: ["owner", "ops", "support", "finance", "sales"],
   planos: ["owner", "finance", "sales"],
   licencas: ["owner", "ops", "finance", "sales"],

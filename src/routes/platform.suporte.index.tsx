@@ -35,6 +35,8 @@ function Suporte() {
   const [tenantId, setTenantId] = useState(tenants[0]?.id ?? "");
   const [cat, setCat] = useState<SupportTicket["category"]>("duvida");
   const [prio, setPrio] = useState<SupportTicket["priority"]>("media");
+  const [priorityFilter, setPriorityFilter] = useState("todos");
+  const [categoryFilter, setCategoryFilter] = useState("todas");
   const [touched, setTouched] = useState(false);
   if (loading) return <PageSkeleton />;
   const openT = tickets.filter((t) => !["resolvido", "encerrado"].includes(t.status));
@@ -50,8 +52,12 @@ function Suporte() {
         <MetricCard label="SLA vencido (demo)" value={openT.filter((t) => t.slaDueAt && new Date(t.slaDueAt) < new Date()).length} hint="SLA demonstrativo" />
       </KpiGrid>
       <div className="mt-4">
-        <ResourceTable<SupportTicket> rows={tickets} getId={(t) => t.id} csvName="tickets" rowLink={(t) => `/platform/suporte/${t.id}`}
-          searchKeys={(t) => `${t.id} ${t.subject} ${name(t.tenantId)}`} statusKey={(t) => t.priority} statusOptions={["urgente", "alta", "media", "baixa"]}
+        <div className="mb-3 flex flex-wrap gap-3">
+          <div className="space-y-1"><Label htmlFor="ticket-priority-filter" className="text-xs text-muted-foreground">Prioridade</Label><select id="ticket-priority-filter" className={sel} value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}><option value="todos">Todas</option>{["urgente", "alta", "media", "baixa"].map((p) => <option key={p} value={p}>{p}</option>)}</select></div>
+          <div className="space-y-1"><Label htmlFor="ticket-category-filter" className="text-xs text-muted-foreground">Categoria</Label><select id="ticket-category-filter" className={sel} value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}><option value="todas">Todas</option>{["acesso", "faturamento", "desempenho", "integracao", "duvida"].map((c) => <option key={c} value={c}>{c}</option>)}</select></div>
+        </div>
+        <ResourceTable<SupportTicket> rows={tickets.filter((t) => (priorityFilter === "todos" || t.priority === priorityFilter) && (categoryFilter === "todas" || t.category === categoryFilter))} getId={(t) => t.id} csvName="tickets" rowLink={(t) => `/platform/suporte/${t.id}`}
+          searchKeys={(t) => `${t.id} ${t.subject} ${name(t.tenantId)}`} statusKey={(t) => t.status} statusOptions={["aberto", "em_andamento", "aguardando", "resolvido", "encerrado"]}
           columns={[
             { key: "id", header: "ID", cell: (t) => t.id, sort: (t) => t.id },
             { key: "sub", header: "Assunto", cell: (t) => t.subject, sort: (t) => t.subject },

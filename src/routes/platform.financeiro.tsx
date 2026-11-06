@@ -29,7 +29,13 @@ function Financeiro() {
   const fin = financeTotals(s);
   const inv = s.invoices.find((i) => i.id === sel);
   const name = (id: string) => s.tenants.find((t) => t.id === id)?.displayName ?? id;
-  const months = ["Ago", "Set", "Out"].map((label, m) => ({ label, value: Math.round(s.invoices.filter((i) => i.status === "paga" && i.id.includes(`2026${String(8 + m).padStart(2, "0")}`)).reduce((a, i) => a + i.amountMinor, 0) / 100) }));
+  const monthKey = (value: string) => value.slice(0, 7);
+  const monthKeys = [...new Set(s.invoices.filter((i) => i.status === "paga" && i.paidAt).map((i) => monthKey(i.paidAt!)))].sort().slice(-3);
+  const months = monthKeys.map((key) => {
+    const paid = s.invoices.filter((i) => i.status === "paga" && i.paidAt && monthKey(i.paidAt) === key);
+    const label = new Date(`${key}-15T12:00:00`).toLocaleDateString("pt-BR", { month: "short" }).replace(".", "");
+    return { label: `${label}/${key.slice(2, 4)}`, value: Math.round(paid.reduce((sum, i) => sum + i.amountMinor, 0) / 100) };
+  });
   return (
     <>
       <PageHeader title="Financeiro do SaaS" description="Receita recebida (dinheiro confirmado) e MRR (contratual) são métricas distintas e nunca somadas." actions={<Button variant="outline" onClick={() => { actions.reset(); toast.success("Fixtures restauradas"); }}>Restaurar fixture</Button>} />
@@ -40,7 +46,7 @@ function Financeiro() {
         <MetricCard label="Taxas de processamento" value={brl(fin.fees)} hint={`Reembolsos: ${brl(fin.refunded)}`} />
       </KpiGrid>
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
-        <div className="lg:col-span-2"><ChartPanel title="Receita recebida por mês" type="bar" data={months} unit="R$" source="Fixture de faturas" period="3 meses" /></div>
+        <div className="lg:col-span-2"><ChartPanel title="Receita recebida por mês" type="bar" data={months} unit="R$" source="Faturas pagas agrupadas pela data de pagamento" period={`${months.length} meses`} /></div>
         <Panel title="Conciliação" actions={<DemoDataBadge />}><dl className="space-y-2 text-sm">
           <div className="flex justify-between"><dt>Recebido bruto</dt><dd className="tnum">{brl(fin.received)}</dd></div>
           <div className="flex justify-between"><dt>(−) Taxas</dt><dd className="tnum">{brl(fin.fees)}</dd></div>

@@ -2,8 +2,8 @@
 import { useSyncExternalStore } from "react";
 import * as F from "./fixtures";
 import type {
-  AppRelease, AuditEvent, CommissionEntry, EntitlementGrant, Incident, Notification, PlanVersion, Reseller,
-  Result, RoleKey, SaasInvoice, StaffMember, SubscriptionSummary, SupportTicket, TenantSummary, ThirdPartyApp, TicketEvent,
+  AppRelease, AuditEvent, CommissionEntry, DomainHealth, EntitlementGrant, Incident, Notification, PlanVersion,
+  PlatformSettings, ProviderCostAllocation, QueueJob, Reseller, Result, RoleKey, SaasInvoice, StaffMember, SubscriptionSummary, SupportTicket, TenantSummary, ThirdPartyApp, TicketEvent,
 } from "./types";
 import type { Domain } from "./types";
 
@@ -14,6 +14,7 @@ export interface DemoState {
   signedIn: boolean;
   role: RoleKey;
   sourceMode: SourceMode;
+  settings: PlatformSettings;
   tenants: TenantSummary[];
   plans: PlanVersion[];
   subscriptions: SubscriptionSummary[];
@@ -26,6 +27,10 @@ export interface DemoState {
   devApps: ThirdPartyApp[];
   incidents: Incident[];
   staff: StaffMember[];
+  queueJobs: QueueJob[];
+  domainHealth: DomainHealth[];
+  providerCosts: ProviderCostAllocation[];
+  providerBudgetMinor: number;
   audit: AuditEvent[];
   notifications: Notification[];
   planHistory: { tenantId: string; from: string; to: string; when: string; reason: string }[];
@@ -37,10 +42,12 @@ const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v));
 
 export function initialState(): DemoState {
   return clone({
-    version: 1, signedIn: false, role: "owner", sourceMode: "ok",
+    version: 1, signedIn: false, role: "owner", sourceMode: "ok", settings: F.PLATFORM_SETTINGS,
     tenants: F.TENANTS, plans: F.PLANS, subscriptions: F.SUBSCRIPTIONS, invoices: F.INVOICES,
     entitlements: F.ENTITLEMENTS, resellers: F.RESELLERS, commissions: F.COMMISSIONS, tickets: F.TICKETS,
-    releases: F.RELEASES, devApps: F.DEV_APPS, incidents: F.INCIDENTS, staff: F.STAFF, audit: F.AUDIT,
+    releases: F.RELEASES, devApps: F.DEV_APPS, incidents: F.INCIDENTS, staff: F.STAFF,
+    queueJobs: F.QUEUE_JOBS, domainHealth: F.DOMAIN_HEALTH, providerCosts: F.PROVIDER_COSTS,
+    providerBudgetMinor: F.MONTHLY_PROVIDER_BUDGET_MINOR, audit: F.AUDIT,
     notifications: F.NOTIFICATIONS, planHistory: [],
   } as DemoState);
 }
@@ -56,7 +63,18 @@ function hydrate() {
     const raw = window.localStorage.getItem(KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (parsed?.version === 1) state = parsed;
+      if (parsed?.version === 1) {
+        const defaults = initialState();
+        state = {
+          ...defaults,
+          ...parsed,
+          settings: { ...F.PLATFORM_SETTINGS, ...parsed.settings },
+          staff: (parsed.staff ?? defaults.staff).map((member: StaffMember) => ({
+            ...member,
+            accessStatus: member.accessStatus ?? (member.active ? "ativo" : "suspenso"),
+          })),
+        };
+      }
     }
   } catch { /* ignore corrupted demo storage */ }
 }
@@ -98,6 +116,7 @@ export const actions = {
   signOut: () => set((s) => { s.signedIn = false; }),
   setRole: (role: RoleKey) => set((s) => { s.role = role; }),
   setSourceMode: (m: SourceMode) => set((s) => { s.sourceMode = m; }),
+  saveSettings: (settings: PlatformSettings) => set((s) => { s.settings = settings; audit(s, "platform.settings.update", "platform", "settings", "Preferências demonstrativas salvas"); }),
   reset: () => set((s) => { const keep = { signedIn: s.signedIn, role: s.role }; Object.assign(s, initialState(), keep); }),
 
   createTenant: (displayName: string, city: string, planId: string) => {
@@ -212,6 +231,23 @@ export const actions = {
   setStaffRole: (id: string, role: RoleKey, reason: string) => set((s) => {
     const m = s.staff.find((x) => x.id === id)!; m.role = role; audit(s, "staff.change_role", "staff", id, reason);
   }),
+  setStaffMfa: (id: string, enabled: boolean, reason: string) => set((s) => {
+    const member = s.staff.find((x) => x.id === id)!;
+    member.mfa = enabled;
+    audit(s, enabled ? "staff.mfa.enable_demo" : "staff.mfa.disable_demo", "staff", id, reason);
+  }),
+  inviteStaff: (name: string, role: RoleKey) => set((s) => {
+    const id = uid("st");
+    s.staff.unshift({ id, name, role, mfa: false, lastSeen: "", sessions: 0, active: false, accessStatus: "convite_pendente" });
+    audit(s, "staff.invite", "staff", id, "Convite apenas visual — nenhum e-mail enviado");
+  }),
+  setStaffAccessStatus: (id: string, status: StaffMember["accessStatus"], reason: string) => set((s) => {
+    const m = s.staff.find((x) => x.id === id)!;
+    m.accessStatus = status;
+    m.active = status === "ativo";
+    if (status !== "ativo") m.sessions = 0;
+    audit(s, `staff.${status}`, "staff", id, reason);
+  }),
   revokeSessions: (id: string, reason: string) => set((s) => {
     const m = s.staff.find((x) => x.id === id)!; m.sessions = 0; audit(s, "session.revoke", "staff", id, reason);
   }),
@@ -220,6 +256,15 @@ export const actions = {
     const order: Incident["status"][] = ["investigando", "mitigado", "monitorando", "resolvido"];
     const next = order[Math.min(order.indexOf(inc.status) + 1, 3)];
     inc.status = next; inc.timeline.push({ when: nowIso(), text: `Status alterado para ${next} (DEMO).` });
+  }),
+  reprocessQueue: (name: string) => set((s) => {
+    const queue = s.queueJobs.find((item) => item.name === name);
+    if (!queue || queue.deadLetterCount === 0) return;
+    const processed = queue.deadLetterCount;
+    queue.deadLetterCount = 0;
+    queue.depth = Math.max(0, queue.depth - processed);
+    queue.status = "saudavel";
+    audit(s, "queue.reprocess_demo", "queue", name, `${processed} mensagens fictícias; nada foi executado`);
   }),
   readNotification: (id: string) => set((s) => { const n = s.notifications.find((x) => x.id === id); if (n) n.read = true; }),
   createDomain: (id: string, domain: string, tenantId: string, status: Domain["status"]) => set((s) => {

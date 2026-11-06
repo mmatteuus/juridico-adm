@@ -2,7 +2,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   Activity, BadgeDollarSign, Bell, Boxes, Building2, ChevronsLeft, Cloud, Code2, Coins, Database, FileStack, Gauge, Globe, Handshake,
-  KeyRound, LifeBuoy, ListChecks, LogOut, Menu, Rocket, RotateCcw, Scale, Search, Settings, ShieldCheck, Siren, Workflow,
+  KeyRound, LifeBuoy, ListChecks, LogOut, Menu, Rocket, RotateCcw, Scale, Search, Settings, ShieldCheck, Siren, Workflow, UsersRound,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
@@ -38,6 +38,7 @@ export const NAV: { group: string; items: NavItem[] }[] = [
     { to: "/platform/infra/custos", label: "Custos (FinOps)", icon: Coins, section: "infra" },
   ] },
   { group: "Governança", items: [
+    { to: "/platform/contas", label: "Contas da equipe", icon: UsersRound, section: "contas" },
     { to: "/platform/seguranca", label: "Segurança", icon: ShieldCheck, section: "seguranca" },
     { to: "/platform/developers", label: "Developer Platform", icon: Code2, section: "developers" },
     { to: "/platform/releases", label: "Releases", icon: Rocket, section: "releases" },
@@ -91,6 +92,8 @@ function GlobalSearch() {
   const tenants = useDemo((s) => s.tenants);
   const tickets = useDemo((s) => s.tickets);
   const resellers = useDemo((s) => s.resellers);
+  const staff = useDemo((s) => s.staff);
+  const role = useDemo((s) => s.role);
   useEffect(() => {
     const h = (e: KeyboardEvent) => { if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); setOpen((o) => !o); } };
     window.addEventListener("keydown", h); return () => window.removeEventListener("keydown", h);
@@ -105,9 +108,10 @@ function GlobalSearch() {
         <CommandInput placeholder="Pesquisar dados administrativos (DEMO)…" />
         <CommandList>
           <CommandEmpty>Nenhum resultado.</CommandEmpty>
-          <CommandGroup heading="Escritórios">{tenants.map((t) => <CommandItem key={t.id} value={`${t.displayName} ${t.id}`} onSelect={() => go(`/platform/escritorios/${t.id}`)}>{t.displayName}<span className="ml-auto text-xs text-muted-foreground">{t.id}</span></CommandItem>)}</CommandGroup>
-          <CommandGroup heading="Chamados">{tickets.map((t) => <CommandItem key={t.id} value={`${t.id} ${t.subject}`} onSelect={() => go(`/platform/suporte/${t.id}`)}>{t.id} — {t.subject}</CommandItem>)}</CommandGroup>
-          <CommandGroup heading="Parceiros">{resellers.map((r) => <CommandItem key={r.id} value={`${r.name} ${r.id}`} onSelect={() => go(`/platform/revendedores/${r.id}`)}>{r.name}</CommandItem>)}</CommandGroup>
+          {canAccess(role, "escritorios") && <CommandGroup heading="Escritórios">{tenants.map((t) => <CommandItem key={t.id} value={`${t.displayName} ${t.id}`} onSelect={() => go(`/platform/escritorios/${t.id}`)}>{t.displayName}<span className="ml-auto text-xs text-muted-foreground">{t.id}</span></CommandItem>)}</CommandGroup>}
+          {canAccess(role, "suporte") && <CommandGroup heading="Chamados">{tickets.map((t) => <CommandItem key={t.id} value={`${t.id} ${t.subject}`} onSelect={() => go(`/platform/suporte/${t.id}`)}>{t.id} — {t.subject}</CommandItem>)}</CommandGroup>}
+          {canAccess(role, "revendedores") && <CommandGroup heading="Parceiros">{resellers.map((r) => <CommandItem key={r.id} value={`${r.name} ${r.id}`} onSelect={() => go(`/platform/revendedores/${r.id}`)}>{r.name}</CommandItem>)}</CommandGroup>}
+          {canAccess(role, "contas") && <CommandGroup heading="Contas da equipe">{staff.map((m) => <CommandItem key={m.id} value={`${m.name} ${m.id} ${ROLES[m.role]}`} onSelect={() => go("/platform/contas")}>{m.name}<span className="ml-auto text-xs text-muted-foreground">{ROLES[m.role]}</span></CommandItem>)}</CommandGroup>}
         </CommandList>
       </CommandDialog>
     </>

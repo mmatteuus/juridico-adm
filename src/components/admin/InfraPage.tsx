@@ -18,6 +18,7 @@ export function InfraPage({ title, description, source, metrics, withApp, childr
   const value = (m: InfraMetric) => {
     if (status(m) === "unavailable") return null;
     const d = series(m.key, period, app).map((x) => x.value);
+    if (d.length === 0) return null;
     const v = m.agg === "sum" ? d.reduce((a, b) => a + b, 0) : m.agg === "last" ? d[d.length - 1] : Math.round(d.reduce((a, b) => a + b, 0) / d.length);
     return v.toLocaleString("pt-BR");
   };
@@ -29,7 +30,7 @@ export function InfraPage({ title, description, source, metrics, withApp, childr
         <Segmented label="Período" value={period} onChange={setPeriod} options={["24h", "7d", "30d"] as const} />
       </>} />
       <PartialDataBanner />
-      <p className="mb-4 text-xs text-muted-foreground">Fonte: {source} — <strong>Não conectado · demonstração</strong>. Use o menu do perfil → “Simular estado das fontes” para testar parcial/indisponível.</p>
+      <p className="mb-4 text-xs text-muted-foreground">Fonte: {source} — <strong>não conectado · demonstração</strong>. Janela no fuso America/Sao_Paulo; última coleta real indisponível. Use o menu do perfil → “Simular estado das fontes” para testar parcial/indisponível.</p>
       <KpiGrid>{metrics.slice(0, 4).map((m) => <MetricCard key={m.key} label={m.label} value={value(m)} unit={m.unit} status={status(m)} source={source} spark={status(m) === "unavailable" ? undefined : series(m.key, period, app).map((x) => x.value)} />)}</KpiGrid>
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
         {metrics.map((m) => <ChartPanel key={m.key} title={m.label} data={series(m.key, period, app)} unit={m.unit} type={m.type} status={status(m)} source={source} period={`${period}${withApp ? ` · ${app}` : ""}`} />)}

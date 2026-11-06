@@ -31,6 +31,7 @@ export type Tone = keyof typeof TONES;
 const STATUS_TONE: Record<string, Tone> = {
   ativo: "success", ativa: "success", paga: "success", saudavel: "success", resolvido: "success", ganho: "success", aprovada: "success", encerrado: "neutral",
   trial: "info", emitida: "info", em_andamento: "info", qualificado: "info", monitorando: "info", prevista: "info", novo: "info", demo: "warning",
+  convite_pendente: "warning", expirada: "warning",
   inadimplente: "danger", vencida: "danger", urgente: "danger", SEV1: "danger", revogado: "danger", investigando: "danger", perdido: "danger", unavailable: "danger",
   regularizacao: "warning", aguardando: "warning", alta: "warning", degradado: "warning", SEV2: "warning", em_analise: "warning", partial: "warning", estimate: "info", mitigado: "warning", proposta: "warning", ajuste: "warning",
   suspenso: "neutral", suspensa: "neutral", cancelado: "neutral", cancelada: "neutral", reembolsada: "neutral", planejado: "neutral", rascunho: "neutral", arquivado: "neutral", inativo: "neutral", media: "neutral", baixa: "neutral", SEV3: "neutral", aberto: "brand",

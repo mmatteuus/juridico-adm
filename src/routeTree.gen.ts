@@ -14,6 +14,7 @@ import { Route as PlatformRouteImport } from './routes/platform'
 import { Route as PlatformIndexRouteImport } from './routes/platform.index'
 import { Route as PlatformAssinaturasRouteImport } from './routes/platform.assinaturas'
 import { Route as PlatformConfiguracoesRouteImport } from './routes/platform.configuracoes'
+import { Route as PlatformContasRouteImport } from './routes/platform.contas'
 import { Route as PlatformDashboardRouteImport } from './routes/platform.dashboard'
 import { Route as PlatformDevelopersRouteImport } from './routes/platform.developers'
 import { Route as PlatformFinanceiroRouteImport } from './routes/platform.financeiro'
@@ -57,6 +58,11 @@ const PlatformAssinaturasRoute = PlatformAssinaturasRouteImport.update({
 const PlatformConfiguracoesRoute = PlatformConfiguracoesRouteImport.update({
   id: '/configuracoes',
   path: '/configuracoes',
+  getParentRoute: () => PlatformRoute,
+} as any)
+const PlatformContasRoute = PlatformContasRouteImport.update({
+  id: '/contas',
+  path: '/contas',
   getParentRoute: () => PlatformRoute,
 } as any)
 const PlatformDashboardRoute = PlatformDashboardRouteImport.update({
@@ -162,6 +168,7 @@ export interface FileRoutesByFullPath {
   '/platform': typeof PlatformRouteWithChildren
   '/platform/assinaturas': typeof PlatformAssinaturasRoute
   '/platform/configuracoes': typeof PlatformConfiguracoesRoute
+  '/platform/contas': typeof PlatformContasRoute
   '/platform/dashboard': typeof PlatformDashboardRoute
   '/platform/developers': typeof PlatformDevelopersRoute
   '/platform/financeiro': typeof PlatformFinanceiroRoute
@@ -187,6 +194,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/platform/assinaturas': typeof PlatformAssinaturasRoute
   '/platform/configuracoes': typeof PlatformConfiguracoesRoute
+  '/platform/contas': typeof PlatformContasRoute
   '/platform/dashboard': typeof PlatformDashboardRoute
   '/platform/developers': typeof PlatformDevelopersRoute
   '/platform/financeiro': typeof PlatformFinanceiroRoute
@@ -214,6 +222,7 @@ export interface FileRoutesById {
   '/platform': typeof PlatformRouteWithChildren
   '/platform/assinaturas': typeof PlatformAssinaturasRoute
   '/platform/configuracoes': typeof PlatformConfiguracoesRoute
+  '/platform/contas': typeof PlatformContasRoute
   '/platform/dashboard': typeof PlatformDashboardRoute
   '/platform/developers': typeof PlatformDevelopersRoute
   '/platform/financeiro': typeof PlatformFinanceiroRoute
@@ -242,6 +251,7 @@ export interface FileRouteTypes {
     | '/platform'
     | '/platform/assinaturas'
     | '/platform/configuracoes'
+    | '/platform/contas'
     | '/platform/dashboard'
     | '/platform/developers'
     | '/platform/financeiro'
@@ -267,6 +277,7 @@ export interface FileRouteTypes {
     | '/'
     | '/platform/assinaturas'
     | '/platform/configuracoes'
+    | '/platform/contas'
     | '/platform/dashboard'
     | '/platform/developers'
     | '/platform/financeiro'
@@ -293,6 +304,7 @@ export interface FileRouteTypes {
     | '/platform'
     | '/platform/assinaturas'
     | '/platform/configuracoes'
+    | '/platform/contas'
     | '/platform/dashboard'
     | '/platform/developers'
     | '/platform/financeiro'
@@ -355,6 +367,13 @@ declare module '@tanstack/react-router' {
       path: '/configuracoes'
       fullPath: '/platform/configuracoes'
       preLoaderRoute: typeof PlatformConfiguracoesRouteImport
+      parentRoute: typeof PlatformRoute
+    }
+    '/platform/contas': {
+      id: '/platform/contas'
+      path: '/contas'
+      fullPath: '/platform/contas'
+      preLoaderRoute: typeof PlatformContasRouteImport
       parentRoute: typeof PlatformRoute
     }
     '/platform/dashboard': {
@@ -496,6 +515,7 @@ declare module '@tanstack/react-router' {
 interface PlatformRouteChildren {
   PlatformAssinaturasRoute: typeof PlatformAssinaturasRoute
   PlatformConfiguracoesRoute: typeof PlatformConfiguracoesRoute
+  PlatformContasRoute: typeof PlatformContasRoute
   PlatformDashboardRoute: typeof PlatformDashboardRoute
   PlatformDevelopersRoute: typeof PlatformDevelopersRoute
   PlatformFinanceiroRoute: typeof PlatformFinanceiroRoute
@@ -521,6 +541,7 @@ interface PlatformRouteChildren {
 const PlatformRouteChildren: PlatformRouteChildren = {
   PlatformAssinaturasRoute: PlatformAssinaturasRoute,
   PlatformConfiguracoesRoute: PlatformConfiguracoesRoute,
+  PlatformContasRoute: PlatformContasRoute,
   PlatformDashboardRoute: PlatformDashboardRoute,
   PlatformDevelopersRoute: PlatformDevelopersRoute,
   PlatformFinanceiroRoute: PlatformFinanceiroRoute,

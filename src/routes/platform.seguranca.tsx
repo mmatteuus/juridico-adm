@@ -1,19 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { toast } from "sonner";
-import { ConfirmationDialog, KpiGrid, MetricCard, PageHeader, PageSkeleton, Panel, ResourceTable, StatusBadge, useFakeLoading } from "@/components/admin/kit";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { actions, fmtDateTime, useDemo } from "@/features/demo/store";
+import { KpiGrid, MetricCard, PageHeader, PageSkeleton, Panel, ResourceTable, StatusBadge, useFakeLoading } from "@/components/admin/kit";
+import { fmtDateTime, useDemo } from "@/features/demo/store";
 import { ROLES } from "@/features/demo/roles";
-import type { AuditEvent, RoleKey, StaffMember } from "@/features/demo/types";
+import type { AuditEvent } from "@/features/demo/types";
 
 export const Route = createFileRoute("/platform/seguranca")({
   head: () => ({ meta: [
-    { title: "Segurança — JURIDO SuperAdmin" },
-    { name: "description", content: "Equipe, perfis de demonstração e trilha de auditoria do JURIDO SuperAdmin." },
-    { property: "og:title", content: "Segurança — JURIDO SuperAdmin" },
-    { property: "og:description", content: "Equipe, perfis de demonstração e trilha de auditoria do JURIDO SuperAdmin." },
+    { title: "Segurança e governança — JURIDO SuperAdmin" },
+    { name: "description", content: "Trilha de auditoria, resultados de ações e governança de acesso do JURIDO SuperAdmin." },
+    { property: "og:title", content: "Segurança e governança — JURIDO SuperAdmin" },
+    { property: "og:description", content: "Trilha de auditoria, resultados de ações e governança de acesso do JURIDO SuperAdmin." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
     { name: "robots", content: "noindex" },
@@ -23,30 +19,22 @@ export const Route = createFileRoute("/platform/seguranca")({
 
 function Seguranca() {
   const loading = useFakeLoading();
-  const staff = useDemo((s) => s.staff);
   const audit = useDemo((s) => s.audit);
-  const [roleOp, setRoleOp] = useState<StaffMember | null>(null);
-  const [newRole, setNewRole] = useState<RoleKey>("support");
-  const [sessOp, setSessOp] = useState<StaffMember | null>(null);
   if (loading) return <PageSkeleton />;
+  const denied = audit.filter((event) => event.outcome === "negado").length;
+  const simulated = audit.filter((event) => event.outcome === "simulado").length;
   return (
     <>
-      <PageHeader title="Acessos e auditoria" description="Perfis da equipe da plataforma, sessões e trilha de auditoria (DEMO — sem segurança real)." />
+      <PageHeader title="Segurança e governança" description="Trilha demonstrativa das ações administrativas e seus resultados. O controle de contas da equipe fica em Contas." />
       <KpiGrid>
-        <MetricCard label="Membros da equipe" value={staff.length} />
-        <MetricCard label="Sem MFA" value={staff.filter((m) => !m.mfa).length} hint="Exigido em produção" />
-        <MetricCard label="Sessões ativas" value={staff.reduce((a, m) => a + m.sessions, 0)} />
         <MetricCard label="Eventos de auditoria" value={audit.length} />
+        <MetricCard label="Ações negadas" value={denied} />
+        <MetricCard label="Ações simuladas" value={simulated} hint="Demonstração local; sem efeito em serviços reais" />
       </KpiGrid>
-      <Panel title="Equipe e perfis" className="mt-4">
-        <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b text-left text-xs text-muted-foreground"><th className="py-2">Nome</th><th>Perfil</th><th>MFA</th><th>Sessões</th><th>Último acesso</th><th /></tr></thead>
-          <tbody>{staff.map((m) => <tr key={m.id} className="border-b last:border-0"><td className="py-2 font-medium">{m.name}</td><td>{ROLES[m.role]}</td><td><StatusBadge status={m.mfa ? "ativo" : "inativo"} /></td><td className="tnum">{m.sessions}</td><td>{fmtDateTime(m.lastSeen)}</td>
-            <td className="space-x-2 whitespace-nowrap text-right"><Button size="sm" variant="outline" onClick={() => { setNewRole(m.role); setRoleOp(m); }}>Alterar perfil</Button><Button size="sm" variant="destructive" disabled={!m.sessions} onClick={() => setSessOp(m)}>Revogar sessões</Button></td></tr>)}</tbody></table></div>
-      </Panel>
       <Panel title="Break-glass (documentado)" className="mt-4">
         <p className="text-sm text-muted-foreground">Acesso emergencial exigirá dois aprovadores, MFA reforçado, janela de tempo limitada e registro completo. Nunca concede leitura de documentos jurídicos. Fluxo [PENDENTE] para produção.</p>
       </Panel>
-      <div className="mt-4">
+      <div className="mt-4" aria-label="Eventos de auditoria">
         <ResourceTable<AuditEvent> rows={audit} getId={(a) => a.id} csvName="auditoria" searchKeys={(a) => `${a.action} ${a.objectId} ${a.reason ?? ""}`} statusKey={(a) => a.actorRole} statusOptions={Object.keys(ROLES)}
           columns={[
             { key: "w", header: "Quando", cell: (a) => fmtDateTime(a.when), sort: (a) => a.when },
@@ -57,10 +45,6 @@ function Seguranca() {
             { key: "j", header: "Justificativa", cell: (a) => a.reason ?? "—", exportValue: (a) => a.reason ?? "", mobileHidden: true },
           ]} />
       </div>
-      <ConfirmationDialog open={!!roleOp} onOpenChange={(o) => !o && setRoleOp(null)} title="Alterar perfil" object={roleOp?.name ?? ""} operation="Mudança de papel da equipe" impact="Altera as telas visíveis para este membro (simulado)." onConfirm={(r) => { actions.setStaffRole(roleOp!.id, newRole, r); toast.success("Perfil alterado (DEMO)"); }}>
-        <div className="space-y-1.5"><Label htmlFor="nr">Novo perfil</Label><select id="nr" className="h-9 w-full rounded-md border bg-background px-2 text-sm" value={newRole} onChange={(e) => setNewRole(e.target.value as RoleKey)}>{(Object.keys(ROLES) as RoleKey[]).map((k) => <option key={k} value={k}>{ROLES[k]}</option>)}</select></div>
-      </ConfirmationDialog>
-      <ConfirmationDialog open={!!sessOp} onOpenChange={(o) => !o && setSessOp(null)} destructive title="Revogar sessões" object={sessOp?.name ?? ""} operation="Encerrar todas as sessões" impact="Revogação simulada; dispositivos offline só seriam afetados ao reconectar." confirmLabel="Revogar" onConfirm={(r) => { actions.revokeSessions(sessOp!.id, r); toast.success("Sessões revogadas (DEMO)"); }} />
     </>
   );
 }

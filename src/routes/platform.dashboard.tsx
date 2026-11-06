@@ -25,6 +25,14 @@ function Dashboard() {
   const mode = metricStatus(s.sourceMode);
   if (loading) return <PageSkeleton />;
   const active = s.tenants.filter((t) => t.status === "ativo").length;
+  const trials = s.tenants.filter((t) => t.status === "trial").length;
+  const delinquent = s.tenants.filter((t) => t.status === "inadimplente").length;
+  const canceled = s.tenants.filter((t) => t.status === "cancelado").length;
+  const periodMs = period === "24h" ? 24 * 60 * 60 * 1000 : period === "7d" ? 7 * 24 * 60 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000;
+  const since = Date.now() - periodMs;
+  const inPeriod = (value?: string) => !!value && new Date(value).getTime() >= since;
+  const newTenants = s.tenants.filter((t) => inPeriod(t.createdAt)).length;
+  const receivedInPeriod = s.invoices.filter((invoice) => invoice.status === "paga" && inPeriod(invoice.paidAt)).reduce((sum, invoice) => sum + invoice.amountMinor, 0);
   const seats = s.tenants.reduce((a, t) => a + t.activeSeats, 0);
   const urgent = s.tickets.filter((t) => t.priority === "urgente" && !["resolvido", "encerrado"].includes(t.status));
   const overdue = s.invoices.filter((i) => i.status === "vencida");
@@ -35,17 +43,22 @@ function Dashboard() {
       <PartialDataBanner />
       <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Comercial</h2>
       <KpiGrid>
-        <MetricCard label="Escritórios ativos" value={active} hint={`${s.tenants.length} cadastrados`} to="/platform/escritorios" spark={[14, 15, 15, 16, 17, active]} />
-        <MetricCard label="Assentos em uso" value={seats} unit="usuários" to="/platform/licencas" delta={4} />
-        <MetricCard label="MRR contratual" value={brl(fin.mrr)} hint="Recorrente contratado — não é recebimento" to="/platform/assinaturas" />
-        <MetricCard label="Receita recebida (3 meses)" value={brl(fin.received)} hint="Dinheiro confirmado" to="/platform/financeiro" />
+        <MetricCard label="Escritórios ativos" value={active} hint={`${s.tenants.length} cadastrados`} source="Mock store local · sem coleta externa" to="/platform/escritorios" spark={[14, 15, 15, 16, 17, active]} />
+        <MetricCard label="Em trial" value={trials} hint="Contas em período de avaliação" source="Mock store local · sem coleta externa" to="/platform/escritorios" />
+        <MetricCard label={`Novos (${period})`} value={newTenants} hint="Cadastros no período selecionado" source="Mock store local · sem coleta externa" to="/platform/escritorios" />
+        <MetricCard label="Inadimplentes" value={delinquent} hint="Escritórios com status inadimplente" source="Mock store local · sem coleta externa" to="/platform/financeiro" />
+        <MetricCard label="Contas canceladas" value={canceled} hint="Status atual; não há timestamp de cancelamento no fixture" source="Mock store local · sem coleta externa" to="/platform/assinaturas" />
+        <MetricCard label="Assentos em uso" value={seats} unit="usuários" source="Mock store local · sem coleta externa" to="/platform/licencas" />
+        <MetricCard label="MRR contratual" value={brl(fin.mrr)} hint="Soma das assinaturas ativas/regularização; não é recebimento" source="Assinaturas da demonstração · sem timestamp de coleta" to="/platform/assinaturas" />
+        <MetricCard label="ARR contratual" value={brl(fin.arr)} hint="ARR = MRR × 12; projeção anual, não receita recebida" source="Assinaturas da demonstração · sem timestamp de coleta" to="/platform/assinaturas" />
+        <MetricCard label={`Receita recebida (${period})`} value={brl(receivedInPeriod)} hint="Faturas pagas no período; não inclui MRR" source="Faturas da demonstração · sem timestamp de coleta" to="/platform/financeiro" />
       </KpiGrid>
       <h2 className="mb-2 mt-6 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Operação técnica</h2>
       <KpiGrid>
-        <MetricCard label="Requisições Workers" value={mode === "unavailable" ? null : req.reduce((a, d) => a + d.value, 0).toLocaleString("pt-BR")} status={mode} source="Cloudflare (não conectado)" to="/platform/infra/trafego" spark={req.map((d) => d.value)} />
-        <MetricCard label="Latência p95" value={mode === "unavailable" ? null : 212} unit="ms" status={mode} source="Cloudflare (não conectado)" to="/platform/infra/trafego" delta={-6} />
-        <MetricCard label="Armazenamento Neon" value={mode === "unavailable" ? null : 318} unit="GB" status={mode} source="Neon (não conectado)" to="/platform/infra/banco" />
-        <MetricCard label="Custo estimado mês" value={mode === "unavailable" ? null : "R$ 12.480"} status={mode === "demo" ? "estimate" : mode} source="FinOps estimado" to="/platform/infra/custos" />
+        <MetricCard label="Requisições Workers" value={mode === "unavailable" ? null : req.reduce((a, d) => a + d.value, 0).toLocaleString("pt-BR")} status={mode} source="Cloudflare não conectado · sem horário de coleta real" to="/platform/infra/trafego" spark={req.map((d) => d.value)} />
+        <MetricCard label="Latência p95" value={mode === "unavailable" ? null : 212} unit="ms" status={mode} source="Cloudflare não conectado · sem horário de coleta real" to="/platform/infra/trafego" delta={-6} />
+        <MetricCard label="Armazenamento Neon" value={mode === "unavailable" ? null : 318} unit="GB" status={mode} source="Neon não conectado · sem horário de coleta real" to="/platform/infra/banco" />
+        <MetricCard label="Custo estimado mês" value={mode === "unavailable" ? null : "R$ 12.480"} status={mode === "demo" ? "estimate" : mode} source="Estimativa FinOps · sem horário de coleta real" to="/platform/infra/custos" />
       </KpiGrid>
       <div className="mt-6 grid gap-4 xl:grid-cols-3">
         <div className="xl:col-span-2"><ChartPanel title="Volume de requisições" data={req} unit="req" status={mode} source="Cloudflare Workers (não conectado)" period={period} /></div>
