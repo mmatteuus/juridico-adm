@@ -28,7 +28,7 @@ function Dominios() {
   const submit = () => {
     // Simulate adding a domain (demo only)
     const id = `dm-${Date.now()}`;
-    actions.createDomain?.(id, domain, tenantId, "pending"); // placeholder action – adjust if needed
+    actions.createDomain?.(id, domain, tenantId, "pending" as const); // placeholder action – adjust if needed
     setOpen(false);
   };
 
