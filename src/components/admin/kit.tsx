@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { AlertTriangle, ArrowDown, ArrowUp, ChevronLeft, ChevronRight, Download, Inbox, Lock, Search, ServerCrash, WifiOff } from "lucide-react";
+import { AlertTriangle, ArrowDown, ArrowUp, ChevronLeft, ChevronRight, Download, Inbox, Lock, Search, ServerCrash, WifiOff, X } from "lucide-react";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import type { MetricStatus } from "@/features/demo/types";
 import { useDemo } from "@/features/demo/store";
+import { createDemoCsv, matchesSearch } from "@/features/demo/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 /* ---------- Badges ---------- */
 export function DemoDataBadge({ className }: { className?: string }) {
@@ -248,9 +250,9 @@ export function ConfirmationDialog({ open, onOpenChange, title, object, operatio
           <DialogDescription>Esta ação altera apenas o estado local da demonstração e gera um registro de auditoria DEMO.</DialogDescription>
         </DialogHeader>
         <dl className="grid grid-cols-[90px_1fr] gap-x-3 sm:grid-cols-[110px_1fr] gap-y-1.5 rounded-md bg-muted p-3 text-sm">
-          <dt className="text-muted-foreground">Objeto</dt><dd className="font-medium">{object}</dd>
-          <dt className="text-muted-foreground">Operação</dt><dd>{operation}</dd>
-          <dt className="text-muted-foreground">Impacto</dt><dd>{impact}</dd>
+          <dt className="text-muted-foreground">Objeto</dt><dd className="min-w-0 break-words font-medium">{object}</dd>
+          <dt className="text-muted-foreground">Operação</dt><dd className="min-w-0 break-words">{operation}</dd>
+          <dt className="text-muted-foreground">Impacto</dt><dd className="min-w-0 break-words">{impact}</dd>
         </dl>
         {children}
         <div className="space-y-1.5">
@@ -268,7 +270,7 @@ export function ConfirmationDialog({ open, onOpenChange, title, object, operatio
 }
 
 /* ---------- Resource table ---------- */
-export interface Column<T> { key: string; header: string; cell: (row: T) => ReactNode; sort?: (row: T) => string | number; className?: string; mobileHidden?: boolean }
+export interface Column<T> { key: string; header: string; cell: (row: T) => ReactNode; sort?: (row: T) => string | number; exportValue?: (row: T) => string | number; className?: string; mobileHidden?: boolean }
 export function ResourceTable<T>({ rows, columns, searchKeys, statusKey, statusOptions, rowLink, pageSize = 10, csvName, emptyText, toolbar, getId }: {
   rows: T[]; columns: Column<T>[]; searchKeys: (row: T) => string; statusKey?: (row: T) => string; statusOptions?: string[];
   rowLink?: (row: T) => string; pageSize?: number; csvName?: string; emptyText?: string; toolbar?: ReactNode; getId: (row: T) => string;
@@ -277,21 +279,26 @@ export function ResourceTable<T>({ rows, columns, searchKeys, statusKey, statusO
   const [statuses, setStatuses] = useState<string[]>([]);
   const [sort, setSort] = useState<{ key: string; dir: 1 | -1 } | null>(null);
   const [page, setPage] = useState(0);
+  const [size, setSize] = useState(pageSize);
+  const hasFilters = q.length > 0 || statuses.length > 0;
+  const clearFilters = () => { setQ(""); setStatuses([]); setPage(0); };
   const filtered = useMemo(() => {
-    let out = rows.filter((r) => searchKeys(r).toLowerCase().includes(q.toLowerCase()));
+    let out = rows.filter((r) => matchesSearch(searchKeys(r), q));
     if (statusKey && statuses.length) out = out.filter((r) => statuses.includes(statusKey(r)));
     if (sort) { const col = columns.find((c) => c.key === sort.key); if (col?.sort) { const f = col.sort; out = [...out].sort((a, b) => { const x = f(a), y = f(b); return (typeof x === "number" && typeof y === "number" ? x - y : String(x).localeCompare(String(y), "pt-BR", { numeric: true })) * sort.dir; }); } }
     return out;
   }, [rows, q, statuses, sort, columns, searchKeys, statusKey]);
-  const pages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const pages = Math.max(1, Math.ceil(filtered.length / size));
   const cur = Math.min(page, pages - 1);
-  const slice = filtered.slice(cur * pageSize, cur * pageSize + pageSize);
+  const slice = filtered.slice(cur * size, cur * size + size);
 
   const exportCsv = () => {
-    const head = columns.map((c) => c.header).join(";");
-    const body = filtered.map((r) => columns.map((c) => { const v = c.sort ? c.sort(r) : ""; return `"${String(v).replace(/"/g, '""')}"`; }).join(";")).join("\n");
-    const blob = new Blob(["\uFEFF" + `# DADOS DEMONSTRATIVOS\n${head}\n${body}`], { type: "text/csv" });
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${csvName ?? "export"}-demo.csv`; a.click();
+    const exported = columns.filter((c) => c.exportValue || c.sort);
+    const body = filtered.map((r) => exported.map((c) => c.exportValue?.(r) ?? c.sort?.(r) ?? ""));
+    const blob = new Blob([createDemoCsv(exported.map((c) => c.header), body)], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = `${csvName ?? "export"}-demo.csv`;
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
   };
 
   return (
@@ -300,31 +307,32 @@ export function ResourceTable<T>({ rows, columns, searchKeys, statusKey, statusO
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
           <div className="relative w-full sm:w-64">
             <Search className="pointer-events-none absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
-            <Input type="search" aria-label="Buscar na tabela" placeholder="Buscar…" value={q} onChange={(e) => { setQ(e.target.value); setPage(0); }} className="h-9 pl-8" />
+            <Input type="search" aria-label="Buscar na tabela" placeholder="Buscar…" value={q} onChange={(e) => { setQ(e.target.value); setPage(0); }} className="h-9 pl-8 pr-9" />
+            {q && <Button type="button" variant="ghost" size="icon" className="absolute right-0.5 top-0.5 size-8" aria-label="Limpar busca" onClick={() => { setQ(""); setPage(0); }}><X /></Button>}
           </div>
           {statusOptions?.map((s) => {
             const on = statuses.includes(s);
             return (
-              <button key={s} type="button" aria-pressed={on} onClick={() => { setStatuses(on ? statuses.filter((x) => x !== s) : [...statuses, s]); setPage(0); }}
-                className={cn("rounded-full border px-2.5 py-1 text-xs capitalize transition-colors", on ? "border-primary bg-accent text-accent-foreground" : "hover:bg-muted")}>
+              <Button key={s} type="button" size="sm" variant="outline" aria-pressed={on} onClick={() => { setStatuses(on ? statuses.filter((x) => x !== s) : [...statuses, s]); setPage(0); }}
+                className={cn("h-7 px-2.5 capitalize shadow-none", on && "border-primary bg-accent text-accent-foreground")}>
                 {LABELS[s] ?? s.replace(/_/g, " ")}
-              </button>
+              </Button>
             );
           })}
         </div>
-        <div className="flex gap-2">{toolbar}{csvName && <Button variant="outline" size="sm" onClick={exportCsv}><Download /> CSV (fixture)</Button>}</div>
+        <div className="flex flex-wrap gap-2">{hasFilters && <Button variant="ghost" size="sm" onClick={clearFilters}><X /> Limpar filtros</Button>}{toolbar}{csvName && <Button variant="outline" size="sm" disabled={!filtered.length} onClick={exportCsv}><Download /> CSV (fixture)</Button>}</div>
       </div>
-      {slice.length === 0 ? <EmptyState title="Nenhum resultado" text={emptyText ?? "Ajuste a busca ou os filtros."} /> : (
+      {slice.length === 0 ? <EmptyState title="Nenhum resultado" text={emptyText ?? "Ajuste a busca ou os filtros."} action={hasFilters ? <Button variant="outline" size="sm" onClick={clearFilters}><X /> Limpar filtros</Button> : undefined} /> : (
         <>
           <div className="scrollbar-thin hidden overflow-x-auto md:block">
             <table className="w-full text-sm">
               <thead className="sticky top-0 z-10"><tr className="border-b bg-muted text-left text-[11px] uppercase tracking-wide text-muted-foreground">
                 {columns.map((c) => (
-                  <th key={c.key} scope="col" className={cn("px-3 py-2 font-medium", c.className)}>
+                  <th key={c.key} scope="col" aria-sort={c.sort ? sort?.key === c.key ? sort.dir === 1 ? "ascending" : "descending" : "none" : undefined} className={cn("px-3 py-2 font-medium", c.className)}>
                     {c.sort ? (
-                      <button type="button" className="inline-flex items-center gap-1 hover:text-foreground" onClick={() => setSort(sort?.key === c.key ? { key: c.key, dir: sort.dir === 1 ? -1 : 1 } : { key: c.key, dir: 1 })}>
+                      <Button type="button" variant="ghost" className="h-auto justify-start gap-1 rounded-sm p-0 text-[11px] font-medium uppercase hover:bg-transparent" onClick={() => { setSort(sort?.key === c.key ? { key: c.key, dir: sort.dir === 1 ? -1 : 1 } : { key: c.key, dir: 1 }); setPage(0); }}>
                         {c.header}{sort?.key === c.key && (sort.dir === 1 ? <ArrowUp className="size-3" /> : <ArrowDown className="size-3" />)}
-                      </button>
+                      </Button>
                     ) : c.header}
                   </th>
                 ))}
@@ -350,7 +358,7 @@ export function ResourceTable<T>({ rows, columns, searchKeys, statusKey, statusO
                   {columns.slice(1).filter((c) => !c.mobileHidden).map((c) => (
                     <div key={c.key} className="min-w-0">
                       <dt className="text-[11px] text-muted-foreground">{c.header}</dt>
-                      <dd className="tnum truncate text-sm">{c.cell(r)}</dd>
+                      <dd className="tnum break-words text-sm">{c.cell(r)}</dd>
                     </div>
                   ))}
                 </dl>
@@ -359,9 +367,14 @@ export function ResourceTable<T>({ rows, columns, searchKeys, statusKey, statusO
           </ul>
         </>
       )}
-      <div className="flex items-center justify-between border-t px-3 py-2 text-xs text-muted-foreground">
-        <span className="tnum">{filtered.length} registros · página {cur + 1} de {pages}</span>
-        <div className="flex gap-1">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-t px-3 py-2 text-xs text-muted-foreground">
+        <span className="tnum" role="status">{filtered.length ? `${cur * size + 1}–${Math.min((cur + 1) * size, filtered.length)} de ${filtered.length}` : "0"} registros{hasFilters && ` · ${rows.length} no total`}</span>
+        <div className="flex items-center gap-2">
+          <Select value={String(size)} onValueChange={(v) => { setSize(Number(v)); setPage(0); }}>
+            <SelectTrigger aria-label="Registros por página" className="h-8 w-28 text-xs"><SelectValue /></SelectTrigger>
+            <SelectContent>{[...new Set([pageSize, 10, 25, 50])].sort((a, b) => a - b).map((n) => <SelectItem key={n} value={String(n)}>{n} por página</SelectItem>)}</SelectContent>
+          </Select>
+          <span className="tnum">{cur + 1}/{pages}</span>
           <Button variant="ghost" size="icon" className="size-7" aria-label="Página anterior" disabled={cur === 0} onClick={() => setPage(cur - 1)}><ChevronLeft /></Button>
           <Button variant="ghost" size="icon" className="size-7" aria-label="Próxima página" disabled={cur >= pages - 1} onClick={() => setPage(cur + 1)}><ChevronRight /></Button>
         </div>
@@ -374,8 +387,8 @@ export function Segmented<T extends string>({ value, onChange, options, label }:
   return (
     <div role="radiogroup" aria-label={label} className="scrollbar-thin inline-flex max-w-full overflow-x-auto rounded-md border bg-card p-0.5">
       {options.map((o) => (
-        <button key={o} role="radio" aria-checked={value === o} type="button" onClick={() => onChange(o)}
-          className={cn("shrink-0 whitespace-nowrap rounded px-2.5 py-1 text-xs font-medium transition-colors", value === o ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>{o}</button>
+        <Button key={o} role="radio" aria-checked={value === o} type="button" variant="ghost" size="sm" onClick={() => onChange(o)}
+          className={cn("h-7 shrink-0 whitespace-nowrap rounded px-2.5 text-xs font-medium", value === o ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>{o}</Button>
       ))}
     </div>
   );
