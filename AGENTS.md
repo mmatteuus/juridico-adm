@@ -1,13 +1,6 @@
-<!-- LOVABLE:BEGIN -->
-> [!IMPORTANT]
-> This project is connected to [Lovable](https://lovable.dev). Avoid rewriting
-> published git history — force pushing, or rebasing/amending/squashing commits
-> that are already pushed — as it rewrites history on Lovable's side and the
-> user will likely lose their project history.
->
-> Commits you push to the connected branch sync back to Lovable and show up in
-> the editor, so keep the branch in a working state.
-<!-- LOVABLE:END -->
+# Regras do repositório
+- Preservar o histórico Git publicado, sem force push ou rebase destrutivo.
+- Alterar e publicar somente o aplicativo SuperAdmin com autorização específica.
 
 ## Project rules
 - This app is the isolated `platform-admin` (JURIDO SuperAdmin) frontend; never import code from other JURIDO apps. Why: each app ships with its own version and deploy.

@@ -36,7 +36,7 @@ function Licencas() {
       <PageHeader title="Licenças e entitlements" description="Direitos comerciais por escritório. Para liberar um add-on, abra a ficha do escritório." />
       <KpiGrid>
         <MetricCard label="Assentos em uso" value={seats} unit={`/ ${limit}`} />
-        <MetricCard label="Ocupação" value={Math.round((seats / limit) * 100)} unit="%" />
+        <MetricCard label="Ocupação" value={limit > 0 ? Math.round((seats / limit) * 100) : "—"} unit="%" />
         <MetricCard label="Overrides/add-ons ativos" value={ents.filter((e) => entitlementStatus(e) === "ativo").length} />
         <MetricCard label="Expiram nos próximos 30 dias" value={expiresSoon} hint="Entitlements ativos com validade definida" />
       </KpiGrid>

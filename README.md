@@ -1,38 +1,39 @@
-# JURIDICO ADM 
+# JURIDO — SuperAdmin (Demonstração)
 
-Implement exactly the screenshot and nothing else
+Frontend independente para demonstração da administração da plataforma SaaS jurídico. Os dados são **fictícios**, armazenados apenas no navegador; não há autenticação real, backend, banco de dados nem operações financeiras efetivas.
 
-This project was built with [Lovable](https://lovable.dev).
+## Funcionalidades de demonstração
 
-## Build with Lovable
+- Dashboard executivo e indicadores
+- Escritórios e fichas administrativas
+- Contas, perfis e acessos ilustrativos
+- Planos, licenças e assinaturas
+- Financeiro SaaS e revendedores
+- Suporte e incidentes
+- Banco, tráfego, domínios, filas e custos de infraestrutura
+- Segurança e auditoria
+- Aplicações de terceiros, APIs e webhooks ilustrativos
+- Releases e configurações
 
-### Rotas do Front‑end (SuperAdmin)
+## Executar localmente
 
-- `/platform/planos` – Listagem de planos SaaS com KPIs e tabela.
-- `/platform/licencas` – Gerenciamento de entitlements (add‑ons, licenças) por escritório.
-- `/platform/revendedores` – Parceiros revendedores, com comissão e estatísticas.
-- `/platform/assinaturas` – Visão geral de assinaturas, MRR, KPIs e histórico de mudanças de plano.
-- `/platform/infra/filas` – Métricas de filas Cloudflare, DLQ, re‑tentativas e gráficos de tendência.
-- `/platform/infra/dominios` – Domínios customizados per escritório, status e dialogo de adição.
-- `/platform/seguranca` – Auditoria de eventos e abas de controle de acesso (placeholder).
-- `/platform/developers` – API keys, webhooks e credenciais de desenvolvedor.
-- `/platform/releases` – Changelog e rollback simulado.
-- `/platform/configuracoes` – Toggle de feature‑flags, seleção de ambiente e demo mais.
+Requer Node.js compatível com a versão do Vite declarada no projeto.
 
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/dc5efaf4-d42c-4ef0-9b19-a156c1a59c53).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+```bash
+npm ci
 npm run dev
 ```
+
+## Verificações
+
+```bash
+npm run lint
+npm run test
+npm run build
+```
+
+## Limites da demonstração
+
+A seleção de perfil é apenas visual, sem proteção de segurança real. Os comandos exibidos são simulações e não acessam provedores. Não utilizar dados de clientes reais ou credenciais neste frontend.
+
+O aplicativo é mantido separadamente do painel dos escritórios e do repositório principal do JURIDO.
